@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>作物管理</title>
+    <link rel="stylesheet" href="../../layuiadmin/layui/css/layui.css" media="all">
+    <link rel="stylesheet" href="../../layuiadmin/style/table.css" media="all">
+</head>
+<body>
+<div class="layui-row table-box">
+    <div class="table-title layui-col-md12">作物管理
+        <ul class="table-title-tool">
+            <!--<li title="添加" data-name="other">-->
+                <!--<a href="other/addCrop.html">-->
+                    <!--<img src="../../images/tianjia.png" alt="">-->
+                    <!--<span style="display: none">添加片区</span>-->
+                <!--</a>-->
+            <!--</li>-->
+            <li title="导入" data-name="other" onclick="uploadFiles()">
+                <a>
+                    <img src="../../images/daoru.png" alt="">
+                </a>
+            </li>
+        </ul>
+    </div>
+    <!--搜索框-->
+    <div class="search-box layui-col-md12">
+        <div class="layui-col-md3 search-input-box">
+            <input type="text" class="layui-input search-input" name="keyword" id="searchInput" autocomplete="off" placeholder="请输入编号">
+        </div>
+        <button class="layui-btn layui-btn-normal search-btn" data-type="reload">
+            <i class="layui-icon layui-icon-search" style="font-size: 16px;"></i>
+            搜索
+        </button>
+    </div>
+    <div style="clear: both;"></div>
+    <!--表格-->
+    <div id="cropTable" class="table-data layui-col-md12" lay-filter="table-tool"></div>
+</div>
+</body>
+<!--表格操作-->
+<script type="text/html" id="tableTool">
+    <!--<a class="layui-btn layui-btn-primary layui-btn-xs" lay-event="detail">查看档案</a>-->
+    <!--<a class="layui-btn layui-btn-xs layui-btn-normal" lay-event="edit" href="other/addCrop.html" id="addCropId">编辑</a>-->
+    <!--<a class="layui-btn layui-btn-xs layui-btn-normal" lay-event="edit">编辑</a>-->
+    <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>
+</script>
+<!--状态开关-->
+<script type="text/html" id="statusStr">
+    <input type="checkbox" name="正常" lay-skin="switch" lay-text="正常|虫害"  lay-filter="statusStr" value="{{d.id}}" {{ d.status_id == 1 ? '' : 'checked'}} >
+</script>
+<!--查看档案 按钮-->
+<script type="text/html" id="growUp">
+    <a href="other/archive.html" class="layui-btn layui-btn-primary layui-btn-xs" lay-event="detailGrowUp">查看档案</a>
+</script>
+<!--成长档案列表-->
+<script type="text/html" id="growArchive">
+    <div class="left-right-select">
+        <div class="left-box">
+            <span class="list-title">操作时间</span>
+            <ul class="staff-list operate-time">
+
+            </ul>
+        </div>
+        <div class="right-box">
+            <span class="list-title">操作时间模板数据</span>
+            <ul class="staff-list operate-data">
+
+            </ul>
+        </div>
+    </div>
+</script>
+
+<script type="text/javascript" src="../../layuiadmin/layui/layui.js"></script>
+<script type="text/javascript" src="../../layuiadmin/js/global.js"></script>
+
+
+<script>
+    var $thisId ;
+    layui.config({
+        base: '../layuiadmin/' //静态资源所在路径
+    }).extend({
+        index: 'lib/index' //主入口模块
+    }).use([ 'jquery', 'element', 'table','form', 'tree'], function () {
+        $ = layui.$;
+        var table = layui.table;
+        var form = layui.form;
+
+        username = getCookie('username');
+        accessToken = getCookie('accessToken');
+        var page = 1; // 第一页
+        var pageSize = 10; // 每页的行数
+        tokenInvalid(accessToken,username);
+
+
+        table.render({
+            elem: '#cropTable'
+            , url: parent.layui.setter.host + '/api/v1/crop/lists'
+            , type: 'get'
+            , cols: [[
+                {field: 'number', title: '作物编号', align: 'center'}
+                , {field: 'cropTypeName', title: '品种', align: 'center'}
+                , {field: 'areaName', title: '所属片区', align: 'center'}
+                , {field: 'status_id', title: '生长状态', align: 'center',templet: '#statusStr'}
+                , {field: 'plantingTime', title: '种植时间', align: 'center'}
+                , { title: '成长历程', align: 'center',toolbar: '#growUp',}
+                , {title: '操作', toolbar: '#tableTool', align: 'center'}
+            ]]
+            , skin: 'nob' //行边框风格
+            , request: {
+                pageName: 'page' //页码的参数名称，默认：page
+                , limitName: 'size' //每页数据量的参数名，默认：limit
+            }
+            , where: {
+                access_token: accessToken,
+                user_login: username
+            }
+            , response: {
+                statusName: 'code' //数据状态的字段名称，默认：code
+                , statusCode: '001' //成功的状态码，默认：0
+                , msgName: 'message' //状态信息的字段名称，默认：msg
+                , countName: 'totalCount' //数据总数的字段名称，默认：count
+                , dataName: 'data' //数据列表的字段名称，默认：data
+            }
+            , page: {
+                layout: ['prev', 'page', 'next', 'count', 'skip', 'limit'] //自定义分页布局
+                , groups: 5 //只显示 5 个连续页码
+                , first: "首页" //显示首页
+                , last: "尾页" //显示尾页
+                , limit: pageSize
+            }
+            ,loading : true
+            , done: function (res) {
+                console.log(res);
+                identityFailure(res.code);
+            }
+        });
+
+        //搜索
+        var active = {
+            reload: function(){
+                var searchInput = $('#searchInput');//获取到搜索框的id
+
+                table.reload('cropTable', { // table容器的id
+                    where: {
+                        number: searchInput.val() // keyword往后台传的值
+                    }
+                    ,page :{
+                        curr :1 //从第一页开始
+                    }
+                });
+            }
+        };
+        // 搜索按钮绑定click事件
+        $('.search-btn').on('click', function(){
+            var type = $(this).data('type');
+            active[type] ? active[type].call(this) : '';
+            // console.log(type);
+        });
+
+
+        //监听工具条
+        table.on('tool(table-tool)', function(obj){
+            var data = obj.data;
+            if(obj.event === 'detail'){ // 查看
+                // 获取详情
+
+            } else if(obj.event === 'del'){ // 删除
+                layer.confirm('真的删除行么', function(index){
+                    // console.log(data.id);
+                    layui.$.ajax({
+                        url : parent.layui.setter.host + '/api/v1/crop/delete?access_token='+accessToken+'&user_login='+username + '&ids=' +data.id,
+                        type : 'post',
+                        dataType: 'json',
+                        success : function (res) {
+
+                            if (res.status.code !== '001'){
+                                layer.msg(res.status.message);
+                                return;
+                            }else {
+                                layer.msg(res.status.message);
+                                obj.del();
+                            }
+
+                        },
+                        error : function (res) {
+                            layer.msg('删除失败');
+                        }
+                    });
+
+                    layer.close(index);
+                });
+                form.render();
+            }else if(obj.event === 'edit'){//编辑
+                // $areaId = data.id;
+                // addCookie('$cropId', $areaId, 1200);
+            }
+
+            if(obj.event === 'detailGrowUp'){ // 成长档案
+
+                $thisId = data.id;
+                addCookie('$thisId', $thisId, 1200);
+
+            }
+        });
+
+        form.on('switch(statusStr)', function(obj) {  // 监听开关 (生长状态)
+
+            if (obj.elem.checked == true){
+                $(this).attr('id','1');
+            }else if (obj.elem.checked == false) {
+                $(this).attr('id','2')
+            }
+
+            var changeId = $(this).attr('id');
+            layer.tips(this.name + '' + obj.elem.checked, obj.othis);
+
+            $.ajax({
+                url : parent.layui.setter.host +'/api/v1/crop/changeStatus'
+                ,type : 'post'
+                ,data : {
+                    "access_token":accessToken
+                    ,"user_login":username
+                    ,"id": this.value
+                    ,"statusId" : changeId
+                }
+                ,success : function (res) {
+                    layer.msg(res.status.message)
+                }
+
+            });
+
+        })
+
+    });
+    function uploadFiles() {
+        var uploadFiles = '';
+        uploadFiles += '<div class="file">';
+        uploadFiles +=      '<div class="excel-img layui-inline"><img src="../../images/excel.png"></div>';
+        uploadFiles +=      '<div class="upload-box layui-inline" id="excelUpload">';
+        uploadFiles +=          '<img src="../../images/upload.png">';
+        uploadFiles +=      '</div>';
+        uploadFiles += '</div>';
+        uploadFiles +=      '<div class="layui-layer-btn"><div class="layui-layer-btn upload"></div><a href="上丁基地各班组人员责任地块汇总表.xls">模板下载</a></div>';
+        layer.open({
+            type: 1,
+            shade: false,
+            title: "数据导入", //不显示标题
+            content: uploadFiles,
+            area: ['400px','300px']
+        });
+        var fileName;
+
+        layui.use('upload', function(){
+            var $ = layui.jquery; // 上传文件
+            var upload = layui.upload;
+        //     //指定允许上传的文件类型
+            upload.render({
+                elem: '#excelUpload'
+                ,url: parent.layui.setter.host + '/api/v1/crop/batchUpload'
+                ,data :{
+                    "access_token": accessToken,
+                    "user_login": username
+                }
+                ,accept: 'file' //普通文件
+                ,exts: 'xls|xlsx'
+                ,allDone: function(obj){ //当文件全部被提交后，才触发
+                    console.log(obj.total); //得到总文件数
+                    console.log(obj.successful); //请求成功的文件数
+                    console.log(obj.aborted); //请求失败的文件数
+                }
+                ,done: function(res){
+                    layer.msg(res.status.message);
+                    console.log(res);
+                    // if(res&&res.code==0){
+                    //     var message = '';
+                    //     message += '  <div class="upload-result">';
+                    //     message += '     <div class="result-title">';
+                    //     message += '     <i class="layui-icon ok-icon">&#x1005;</i>';
+                    //     message += ' <span>导入成功</span>';
+                    //     message += ' </div>';
+                    //     message += ' <div class="result-content layui-form layui-form-pane">';
+                    //     message += '     <div class="layui-form-item" pane>';
+                    //     message += ' <label class="layui-form-label">成功条数</label>';
+                    //     message += '     <div class="layui-input-block">';
+                    //     message += '     <input type="text" name="" autocomplete="off" class="layui-input result-input" placeholder="'+res.data.length+'" disabled>';
+                    //     message += ' </div>';
+                    //     message += ' </div>';
+                    //     message += ' </div>';
+                    //     message += ' <div class="result-title">';
+                    //     message += '     <i class="layui-icon error-icon">&#x1007;</i>';
+                    //     message += ' <span>导入失败</span>';
+                    //     message += ' </div>';
+                    //     message += ' <div class="result-content layui-form layui-form-pane">';
+                    //     message += '     <div class="layui-form-item" pane>';
+                    //     message += ' <label class="layui-form-label">失败条数</label>';
+                    //     message += '     <div class="layui-input-block">';
+                    //     message += '     <input type="text" name="" autocomplete="off" class="layui-input result-input" placeholder="'+res.data2.length+'" disabled>';
+                    //     message += ' </div>';
+                    //     message += ' </div>';
+                    //     message += ' </div>';
+                    //     message += ' <div class="result-content layui-form layui-form-pane">';
+                    //     message += '     <div class="layui-form-item" pane>';
+                    //     message += '         <label class="layui-form-label">失败原因</label>';
+                    //     message += '         <div class="layui-input-block">';
+                    //     for(var i=0;i<res.data2.length;i++){
+                    //         message += '             <input type="text" name="" autocomplete="off" class="layui-input result-input" placeholder="'+res.data2[i].row+' '+res.data2[i].reason.replace(/\"/g,'')+'" disabled>';
+                    //
+                    //     }
+                    //
+                    //     message += '         </div>';
+                    //     message += ' </div>';
+                    //     message += ' </div>';
+                    //     message += ' </div>';
+                    //     layer.open({
+                    //         type : 1,
+                    //         shade: false,
+                    //         title: '导入结果', //不显示标题
+                    //         content : message,
+                    //         area : ['450px','450px'],
+                    //         btn: ['确认'],
+                    //         yes: function (index) {
+                    //             parent.layui.$("iframe[src='customer/customer.html']").attr("src","customer/customer.html");
+                    //         }
+                    //     })
+                    //
+                    // }else{
+                    //     layer.msg(res.msg, {time: 3000});
+                    // }
+                }
+            });
+
+        });
+    }
+
+
+
+
+</script>
+</html>

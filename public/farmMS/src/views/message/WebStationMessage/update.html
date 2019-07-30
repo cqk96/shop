@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>修改消息</title>
+    <link rel="stylesheet" href="../../../layuiadmin/layui/css/layui.css" media="all">
+    <link rel="stylesheet" href="../../../layuiadmin/style/table.css" media="all">
+    <link rel="stylesheet" type="text/css" href="../../../layuiadmin/js/jsTools/zTree/zTreeStyle.css">
+    <style type="text/css">
+    body {
+        background-color: #FFF;
+    }
+    .laytable-cell-1-timeRange {
+        overflow: visible;
+    }
+    .operate-form .layui-form-label{
+        width: auto;
+    }
+    .ztree {
+        width: 70%;
+        margin: 0 auto;
+    } 
+    </style>
+</head>
+<body>
+<form class="layui-form" action="">
+    <div class="layui-form-item">
+        <label class="layui-form-label">消息内容</label>
+        <div class="layui-input-block" style="">
+            <textarea id="content" name="content" placeholder="请输入消息内容"  required lay-verify="required" class="layui-textarea"></textarea>
+        </div>
+    </div>
+
+    <div id="tree" class="ztree"></div>
+    
+    <div id="messagePushResultBox" class="message-push-result-box"></div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">&nbsp;</label>
+        <div class="layui-input-block" style="">
+            <a class="layui-btn layui-btn-warm" href="index.html">返回</a>
+            <button class="layui-btn" lay-submit lay-filter="submitForm">立即提交</button>
+        </div>
+    </div>
+
+</form>
+</body>
+<script type="text/javascript" src="../../../layuiadmin/layui/layui.js"></script>
+<script type="text/javascript" src="../../../layuiadmin/js/global.js"></script>
+<script type="text/javascript" src="../../../layuiadmin/jQuery/jquery-1.9.1/jquery.min.js"></script>
+<script type="text/javascript" src="../../../layuiadmin/js/jsTools/zTree/jquery.ztree.all.min.js"></script>
+
+<script type="text/javascript">
+
+layui.config({
+        base: '../../../layuiadmin/' //静态资源所在路径
+    }).extend({
+        index: 'lib/index' //主入口模块
+    }).use([ 'jquery', 'element', 'table','form'], function () {
+        $ = layui.$;
+        var element = layui.element;
+        var table = layui.table;
+        var form = layui.form;
+        // topcateid = 0;
+
+        username = getCookie('username');
+        accessToken = getCookie('accessToken');
+        var page = 1; // 第一页
+        var pageSize = 10; // 每页的行数
+        var host = parent.layui.setter.host;
+        var ok = true;
+        var curId = getCookie("msgId");
+        var usersArr = new Array();
+
+        $.ajax({
+            url: "/api/v1/message/unpushed/detail",
+            type: "GET",
+            dataType: "JSON",
+            data: {
+                user_login: username,
+                access_token: accessToken,
+                id: curId,
+                time: new Date()
+            },
+            cache: false,
+            async: false,
+            success: function(response) {
+
+                identityFailure(response['status']['code']);
+
+                if( !response['status']['success'] ) {
+                    ok = false;
+                    layer.msg(response['status']['message'], {time: 2000});
+                    return false;
+                }
+
+                if( response['data']==null || response['data'].length==0) {
+                    layer.msg("查询不到数据详情", {time: 2000});
+                    return false;
+                }
+
+                
+                $("#content").val( response['data'][0]['content'] );
+
+                for (var i = 0; i < response['data'].length; i++) {
+                    usersArr.push( response['data'][i]['user_id'] );
+                }
+
+            }
+        });    
+
+        if( ok ) {
+
+           /*获取此时能进行的用户选择*/
+            $.ajax({
+                url: "/api/v1/department/departmentUsers",
+                type: "GET",
+                dataType: "JSON",
+                data: {
+                    user_login: username,
+                    access_token: accessToken,
+                    page: 1,
+                    size: 10000,
+                    time: new Date()
+                },
+                cache: false,
+                async: false,
+                success: function(response) {
+
+                    identityFailure(response['status']['code']);
+
+                    if( !response['status']['success'] ) {
+                        ok = false;
+                        layer.msg(response['status']['message'], {time: 2000});
+                        return false;
+                    }
+
+                    var data = response['data'];
+                    var nodes = new Array();
+                    var node = new Object();
+                    var children = new Object();
+
+                    if( data==null || data.length==0) {
+                        layer.msg("查询不到数据", {time: 2000});
+                        return false;
+                    }
+
+                    for(var i=0; i<data.length; i++) {
+
+                        node = new Object();
+
+                        node['name'] = data[i].departmentName;
+                        node['id'] = i+1;
+                        node['children'] = new Array();
+                        node['open'] = true;
+
+                        var users = data[i].users;
+                        
+                        for (var j = 0; j < users.length; j++) {
+                            children = new Object();
+                            children['name'] = users[j].name;
+                            children['id'] = users[j].id;
+
+                            if( $.inArray(users[j].id, usersArr) >= 0 ) {
+                                
+                                children['checked'] = true;
+                                node['checked'] = true;
+                            }
+
+                            node['children'].push( children );
+
+                        }
+
+                        nodes.push( node );
+
+                    }
+
+                    var setting = {
+                        check: {
+                            enable: true
+                        },
+
+                    };
+
+                    zTreeObj = $.fn.zTree.init($("#tree"), setting, nodes);
+
+                   
+                }
+
+            }); 
+
+        }
+
+        form.on('submit(submitForm)', function(data){
+
+            var checkedNodes = zTreeObj.getCheckedNodes(true);
+    
+            if( checkedNodes.length == 0 ) {
+                layer.msg("请选择要推送的人员", {time: 2000});
+                return false;
+            }
+
+            var postUserArr = new Array();
+            for (var i = 0; i < checkedNodes.length; i++) {
+                
+                if( typeof(checkedNodes[i].isParent)=="undefined" ) {
+                    if( $.inArray(checkedNodes[i].id, postUserArr) < 0 ) {
+                        postUserArr.push(checkedNodes[i].id);
+                    }
+                }
+
+            }
+            
+            var clickObj = data.elem;
+            $(clickObj).attr("disabled", true);
+            var postData = data.field;
+
+            postData['user_login'] = username;
+            postData['access_token'] = accessToken;
+            postData['msgId'] = curId;
+            postData['userIds'] = postUserArr.join(",");
+
+            $.ajax({
+              url: host + "/api/v1/message/update",
+              type: "POST",
+              data: postData,
+              async: false,
+              success: function(response){
+
+                identityFailure(response['status']['code']);
+                
+                if( response['status']['success'] ) {
+                  layer.msg("更新成功", {time: 2000});
+                  setTimeout(function(){
+                    window.location.reload();
+                  }, 1400);
+                } else {
+                  layer.msg(response['status']['message'], {time: 2000});
+                  $(clickObj).attr("disabled", false);
+                }
+              }
+            });
+            return false; //阻止表单跳转。如果需要表单跳转，去掉这段即可。
+        });
+
+    });
+</script>

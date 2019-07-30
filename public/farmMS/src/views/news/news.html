@@ -1,0 +1,463 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>文章管理</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=0">
+    <link rel="stylesheet" href="../../layuiadmin/layui/css/layui.css" media="all">
+    <link rel="stylesheet" href="../../layuiadmin/style/table.css" media="all">
+
+    <style>
+        .layui-table-cell{
+            height:40px;
+            line-height: 40px;
+        }
+        .avatar-box,.avatar-box img  {
+            width: 38px;
+            height: 38px;
+            -webkit-border-radius: 50%;
+            -moz-border-radius: 50%;
+            border-radius: 50%;
+        }
+    </style>
+</head>
+<body>
+<div class="table-box layui-row">
+    <div class="table-title layui-col-md12">文章管理
+        <ul class="table-title-tool">
+            <li title="添加新文章" data-name="other">
+                <a href="other/addNews.html" id="addNewsId">
+                    <img src="../../images/tianjia.png" alt="">
+                    <span style="display: none">添加文章</span>
+                </a>
+            </li>
+
+        </ul>
+    </div>
+
+    <!--表格-->
+    <div class="table-data layui-col-md12" id="newsTable" lay-filter="table-tool" >
+
+    </div>
+
+</div>
+
+<script type="text/html" id="addStaff">
+    <a class="layui-btn layui-btn-primary layui-btn-xs" lay-event="detailStaff">查看人员</a>
+</script>
+
+<!--操作-->
+<script type="text/html" id="tableTool">
+    <a class="layui-btn layui-btn-primary layui-btn-xs" lay-event="detail" href="other/addNews.html">查看编辑</a>
+    <!--<a class="layui-btn layui-btn-xs layui-btn-normal" lay-event="edit">编辑</a>-->
+    <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>
+</script>
+<!--封面-->
+<script type="text/html" id="cover">
+    <div class="avatar-box">
+        <img src="{{parent.layui.setter.host+ d.cover}}" alt="">
+    </div>
+</script>
+
+
+<script src="../../layuiadmin/layui/layui.js"></script>
+<script src="../../layuiadmin/jQuery/jquery-1.9.1/jquery.min.js"></script>
+<script src="../../layuiadmin/js/global.js"></script>
+<script>
+
+    layui.config({
+        base: '../../layuiadmin/' //静态资源所在路径
+    }).extend({
+        index: 'lib/index' //主入口模块
+    }).use(['index', 'table', 'upload'],function(){
+
+        $ = layui.$;
+        var element = layui.element;
+        var table = layui.table;
+        var form = layui.form;
+
+        var $newsId;
+        username = getCookie('username');
+        accessToken = getCookie('accessToken');
+        tokenInvalid(accessToken,username);
+        var page = 1; // 第一页
+        var pageSize = 10; // 每页的行数
+
+        $("#addNewsId").click(function () {
+            $newsId = $(this).attr('id');
+            addCookie('$newsId', $newsId, 1200);
+        });
+        // 获取部门列表
+
+        table.render({
+            url: parent.layui.setter.host + '/api/v1/news/lists'
+            , elem: '#newsTable'
+            , type: 'get'
+            , cols: [[
+                {field: 'title', title: '文章标题', align: 'center'}
+                , {field: 'cover', title: '文章封面', align: 'center',templet:'#cover'}
+                , {field: 'class_name', title: '文章分类', align: 'center'}
+                , {title: '操作', toolbar: '#tableTool', align: 'center'}
+            ]]
+            , where: {
+                access_token: accessToken,
+                user_login: username,
+            }
+            , skin: 'nob' //行边框风格
+            , request: {
+                pageName: 'page' //页码的参数名称，默认：page
+                , limitName: 'size' //每页数据量的参数名，默认：limit
+            }
+            ,response: {
+                statusName: 'code' //数据状态的字段名称，默认：code
+                ,statusCode: '001' //成功的状态码，默认：0
+                ,msgName: 'message' //状态信息的字段名称，默认：msg
+                ,countName: 'totalCount' //数据总数的字段名称，默认：count
+                ,dataName: 'data' //数据列表的字段名称，默认：data
+            }
+            , page: {
+                layout: ['prev', 'page', 'next', 'count', 'skip', 'limit'] //自定义分页布局
+                , groups: 5 //只显示 5 个连续页码
+                , first: "首页" //显示首页
+                , last: "尾页" //显示尾页
+                , limit: pageSize
+            }
+            ,loading : true
+            ,done : function (res) {
+                console.log(res);
+            }
+
+        });
+
+        //监听工具条
+        table.on('tool(table-tool)', function(obj){
+            var data = obj.data;
+            if(obj.event === 'detail'){ // 查看
+
+                $newsId = addCookie('$newsId',data.id,1200);
+
+            } else if(obj.event === 'del'){ // 删除
+                layer.confirm('真的删除这行么', function(index){
+                    // console.log(data.id);
+                    layui.$.ajax({
+                        url : parent.layui.setter.host + '/api/v1/news/delete?access_token='+accessToken+'&user_login='+username + '&ids=' +data.id,
+                        type : 'post',
+                        dataType: 'json',
+                        success : function (res) {
+                            if (res.status.code == '003'){
+                                layer.msg(res.status.message);
+                                return;
+                            }
+                            layer.msg(res.status.message);
+                            obj.del();
+                            table.render("departmentTable",{
+                                page: {
+                                    curr: 1 //重新从第 1 页开始
+                                }
+                                ,where: {
+                                }
+                            });
+
+                        },
+                        error : function (res) {
+                            layer.msg('删除失败');
+                        }
+                    });
+
+                    layer.close(index);
+                });
+                form.render();
+            }else if(obj.event === 'edit'){//编辑
+
+                var editHtml = $("#edit").html();
+                layer.open({
+                    type :1 ,
+                    title : '修改信息',
+                    area: ["750px",'550px'],
+                    content : editHtml,
+                    btn: ["确认","取消"],
+                    yes : function (index) {
+
+                        var mewName = $("#departmentName").val();//新部门名称
+
+                        var childDepartmentsIdArr = []; // 下属部门的id
+                        var parentDepartmentsIdArr = []; // 上属部门的id
+
+                        // 选中下属部门
+                        $("input:checkbox[name='childrenDepartment']:checked").each(function() {
+                            var departmentsId = '';
+                            departmentsId +=  $(this).attr("id");
+
+                            childDepartmentsIdArr.push(departmentsId);
+                            return childDepartmentsIdArr;
+                        });
+                        // 选中上属部门
+                        $("input:radio[name='parentsDepartment']:checked").each(function() {
+                            var departmentsId = '';
+                            departmentsId +=  $(this).attr("id");
+
+                            parentDepartmentsIdArr.push(departmentsId);
+                            return parentDepartmentsIdArr;
+                        });
+
+                        parentDepartmentsIdArr = parentDepartmentsIdArr.join(',');
+                        childDepartmentsIdArr = childDepartmentsIdArr.join(',');
+
+                        $.ajax({
+                            url : parent.layui.setter.host + '/api/v1/department/updateDepartmentInfo?access_token='+accessToken+'&user_login='+username + '&id=' +data.id + '&name=' + mewName +'&pid='+parentDepartmentsIdArr+'&cids='+childDepartmentsIdArr,
+                            type: 'post',
+                            success : function (res) {
+                                layer.msg('修改成功');
+                                // console.log(res)
+                                table.render("departmentTable",{
+                                    page: {
+                                        curr: 1 //重新从第 1 页开始
+                                    }
+                                    ,where: {
+
+                                    }
+
+                                });
+
+                            },
+                            error : function (res){
+
+                            }
+                        });
+                        layer.close(index);
+                    },
+                    btn2 : function (index) {
+                        layer.close(index);
+                    }
+                });
+
+                $.ajax({
+                    url : parent.layui.setter.host + '/api/v1/department/read?access_token='+accessToken+'&user_login='+username + '&id=' +data.id,
+                    type: 'get',
+                    success : function (res) {
+                        var $thisDepartment = res.data;
+
+                        $("#departmentName").val($thisDepartment.data.name);
+
+                        for (var i = 0 ; i <= $thisDepartment.parents.length - 1; i++){
+
+                            // 上属部门
+                            var parentsDepartmentHtml = '<input type="radio" name="parentsDepartment" title="'+$thisDepartment.parents[i].name +'" id="'+$thisDepartment.parents[i].id+'">';
+
+                            $(".parents-department").append(parentsDepartmentHtml);
+
+
+                            var parentsInput =  $(".parents-department input"); // 获取全部的子部门
+
+                            var allParentsId ;
+                            for (var j = 0; j <= parentsInput.length - 1; j++){
+                                allParentsId = parentsInput[j].id;
+
+                                if ($thisDepartment.parents[i].checked == true){
+                                    var checkedId = $thisDepartment.parents[i].id; // 获取选中的子部门id
+
+                                    if (allParentsId == checkedId) {
+
+                                        $('#parentsDepartment').find('#'+parentsInput[j].id+'').prop("checked", true);
+                                    }
+
+                                }
+                            }
+                            form.render();
+                        }
+
+                        for (var i = 0 ; i <= $thisDepartment.children.length - 1; i++){
+
+                            //下属部门
+                            var childrenDepartmentHtml = '<input type="checkbox" name="childrenDepartment" title="'+$thisDepartment.children[i].name +'" lay-skin="primary" id="'+$thisDepartment.children[i].id+'">';
+
+                            $(".children-department").append(childrenDepartmentHtml);
+
+
+                            var chilrenInput =  $(".children-department input"); // 获取全部的子部门
+
+                            var allChilrenId ;
+                            for (var j = 0; j <= chilrenInput.length - 1; j++){
+                                allChilrenId = chilrenInput[j].id;
+
+                                if ($thisDepartment.children[i].checked == true){
+                                    var checkedId = $thisDepartment.children[i].id; // 获取选中的子部门id
+
+                                    if (allChilrenId == checkedId) {
+
+                                        $('#childrenDepartment').find('#'+chilrenInput[j].id+'').prop("checked", true);
+                                    }
+
+                                }
+                            }
+
+                            form.render();
+                        }
+                    }
+                })
+
+            }
+            // 查看部门员工
+            if (obj.event === 'detailStaff'){
+                $thisDepartmentId = data.id;
+
+                var index = null;
+                // console.log(data.id);
+                var contentStr = $("#detailStaffList").html();
+
+                layer.open({
+                    type : 1,
+                    area :['600px','500px'],
+                    title: '查看编辑部门人员',
+                    btn : false,
+                    content : contentStr
+                    ,cancel: function(){
+                        layer.closeAll('dialog');
+                    }
+                });
+
+                // 该部门的人员
+                $.ajax({
+                    url: parent.layui.setter.host+'/api/v1/department/user/lists?access_token='+accessToken+'&user_login='+username +'&id='+data.id,
+                    type : 'get',
+
+                    success : function (res) {
+                        var $thisList = res.data;
+
+                        // console.log($thisList);
+
+                        if ($thisList.data == null){
+                            var lis = '<li class="null-staff">暂无人员</li>';
+                            $(".department-staff").append(lis);
+                            return;
+                        }
+
+                        for (var i = 0 ; i< $thisList.data.length ;i++){
+                            var lis = '<li id="'+$thisList.data[i].relId+'"><span>'+$thisList.data[i].name+'</span><i class="layui-icon layui-icon-delete delete-icon" onclick="deleteStaff(this)"></i></li>';
+                            $(".department-staff").append(lis);
+                        }
+
+                    },
+                    error :function (res) {
+
+                    }
+                });
+
+                // 全部人员
+                $.ajax({
+                    url: parent.layui.setter.host+'/api/v1/user/all?access_token='+accessToken+'&user_login='+username,
+                    type : 'get',
+                    beforeSend: function () {
+                        index = layer.load();
+                    },
+                    success : function (res) {
+
+                        layer.close(index);
+                        var $thisList = res.data;
+
+                        // console.log($thisList);
+                        for (var i = 0 ; i< $thisList.length ;i++){
+                            var lis = '<li id="'+$thisList[i].id+'"><span>'+$thisList[i].name+'</span><i class="layui-icon layui-icon-add-circle add-icon" onclick="addStaff(this)"></i></li>';
+                            $(".all-staff").append(lis);
+                        }
+                    },
+                    error :function (res) {
+
+                    }
+                });
+
+            }
+
+        });
+    });
+    //删除人员
+    function deleteStaff(obj) {  // 移除部门成员
+        var $this = $(obj);
+        var $thisId = $this.parent().attr('id');
+        layer.msg('确定移除此人?', {
+            time :false,
+            btn: ['是的', '取消'],
+            yes : function(index){
+                $.ajax({
+                    url: parent.layui.setter.host+'/api/v1/department/user/delete?access_token='+accessToken+'&user_login='+username+'&id='+$thisId,
+                    type : 'post',
+                    success : function (res) {
+                        layer.msg('移除成功');
+                        $this.parent().remove();
+                        layer.close(index);
+                    },
+                    error :function (res) {
+
+                    }
+                });
+            },
+            btn2 :function (index) {
+                layer.close(index)
+            }
+        });
+    }
+
+    //添加人员
+    function addStaff(obj) {
+        var $this = $(obj);
+        var $thisId = $this.parent().attr('id'); // 人员id
+        var $thisName = $this.parent().find('span').text(); //获取姓名
+
+        layer.msg('确定添加此人?', {
+            time :false,
+            btn: ['是的', '取消'],
+            yes :function (index) {
+                $.ajax({
+                    url: parent.layui.setter.host+'/api/v1/department/user/create?access_token='+accessToken+'&user_login='+username+'&userId='+$thisId +'&name='+$thisName + '&id='+$thisDepartmentId,
+                    type : 'post',
+                    success : function (res) {
+                        var departmentStaffLis = $(".department-staff li");
+                        var allStaffLis = $(".all-staff li");
+
+                        var departmentStaffArr = []; // 部门成员数组
+
+                        departmentStaffLis.each(function() {
+                            departmentStaffArr.push($(this).text());
+                        });
+
+                        // 添加时判断是否已存在
+                        var Contrast = $.inArray($thisName ,departmentStaffArr);
+                        if (Contrast == '-1'){
+
+                            var nullStaff = $(".department-staff li");
+
+                            if (nullStaff.attr("class") == "null-staff"){
+                                $(".department-staff").find(".null-staff").remove();
+
+                            }
+
+                            var lis = '<li id="'+$thisId+'"><span>'+$thisName+'</span><i class="layui-icon layui-icon-delete delete-icon" onclick="deleteStaff(this)"></i></li>';
+                            $(".department-staff").append(lis);
+                            layer.msg('添加成功');
+                            layer.close(index);
+                            return;
+                        }else{
+                            layer.msg('部门已存在此人,请勿重复添加');
+                            return;
+                        }
+
+
+
+                    },
+                    error :function (res) {
+
+                    }
+                });
+            },
+            btn2 : function (index) {
+                layer.close(index)
+            }
+        });
+    }
+</script>
+
+</body>
+</html>

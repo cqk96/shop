@@ -1,0 +1,19 @@
+html, body {width: 100%;height: 100%;}
+body {overflow-x: hidden;}
+html,body,div,li,a,span{padding: 0px; margin: 0px; }
+.bottom-bar-default {width: 100%; height: 1.25rem; }
+.bottom-bar-box {width: 100%; height: 1.1rem; position: fixed; bottom: 0px; background-color: #FFF; z-index: 99; }
+.each-bar-box {width: 33.3333%; height: 100%; float: left; position: relative; }
+.each-bar-img {width: 20%; height: 0.5rem; position: absolute; left: 40%; top: 0.2rem; }
+.bar-text-box {position: absolute; bottom: 0px; text-align: center; width: 100%; color: #737373; font-weight: 900; font-size: 0.3rem; }
+.bar-text-on {color: #eec57d !important; }
+.item-concret-box {position: absolute; top: 0.12rem; right: 0.6rem; font-size: 0.3rem; color: #969696; }
+a {text-decoration: none; color: #808080; }
+.top-bar {width: 100%;height:5.6rem;overflow: hidden;}
+.top-bar img {display: block;width: 100%;}
+.cross-full{display: block;width: 100%;overflow-x: hidden;float: left;}
+.binary-box {width: 49%;float: left;height:5rem;border: 0.03rem solid #F1F1F3;;}
+.binary-box img {max-width: 100%;height: 3.3rem;margin-bottom: 0.1rem;}
+.title-box {font-size: 0.24rem;height: 1rem; width: 100%;overflow: hidden;line-height: 1.3;color: #888;padding-left: 0.1rem;padding-right: 0.1rem;}
+.price-content {font-size: 0.28rem;color: #f43d60;margin-left: 0.3rem;}
+.price-origin-content {font-size: 0.24rem;color: #999;margin-left: 0.05rem;text-decoration:line-through;}

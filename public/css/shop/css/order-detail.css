@@ -1,0 +1,242 @@
+html,body,span,div,p{
+		padding: 0px;
+		margin: 0px;
+	}
+	html, body {
+		width: 100%;
+		height: 100%;
+	}
+	body {
+		background-color: #f5f5f5;
+	}
+	.nosee {
+		display: none;
+	}
+	a {
+		text-decoration: none;
+	}
+
+	.rest-div-20 {
+		width: 100%;
+		height: 0.2rem;
+	}
+	.rest-div-40 {
+		width: 100%;
+		height: 0.4rem;	
+	}
+	.order-detail-box {
+		width: 100%;
+		height: 2.5rem;
+		background-color: #FFF;
+	}
+	.order-title-box {
+		font-size: 0.4rem;
+		color: #b4b4b4;
+		padding-top: 0.2rem;
+	}
+	.order-img {
+		display: block;
+		width: 0.32rem;
+		height: 0.36rem;
+		float: left;
+		margin-right: 0.05rem;
+	}
+	.order-status {
+		color: #d31826 !important;
+	}
+	.item-value {
+		margin-left: 0.2rem;
+		color: #333333;
+	}
+	.extra-msg {
+		color: #b4b4b4 !important;
+		margin-left: 0.2rem;
+	}
+	.item-name {
+		margin-top: 0.2rem;
+		font-size: 0.3rem;
+		color: #b4b4b4;
+	}
+	.time-box {
+		color: #5c5c5c;
+		font-size: 0.24rem;
+		margin-top: 0.1rem;
+	}
+	.order-detail-box p{
+		/*padding-left: 0.2rem;*/
+		width: 90%;
+		margin-left:auto;
+		margin-right:auto;
+	}
+
+	/*地址*/
+	.address-box {
+		width: 100%;
+		height: 5rem;
+		background-color: #FFF;
+	}
+	.address-concret-box {
+		width: 100%;
+		height: 2.1rem;
+		background-color: #FFF;
+	}
+	.address-name-box {
+		width: 90%;
+		height: 0.9rem;
+		margin: 0 auto;
+		
+		font-size: 0.4rem;
+		color: #333333;
+		position: relative;
+	}
+	.address-name-title-box {
+		line-height: 0.9rem;
+		width: 100%;
+		height: 100%;
+	}
+	.phone-box {
+		position: absolute;
+		top: 0.25rem;
+		right: 0px;
+	}
+	.main-address-box,.sub-address-box {
+		font-size: 0.35rem;
+		color: #333333;
+		width: 90%;
+		margin: 0 auto;
+	}
+	.sub-address-box {
+		margin-top: 0.2rem;
+	}
+
+	/*支付*/
+	.each-way-box {
+		width: 90%;
+		height: 1rem;
+		margin: 0 auto;
+		font-size: 0.35rem;
+		color: #999999;
+		position: relative;
+		border-bottom: 0.03rem dashed #eaeaea;
+	}
+	.each-way-title-box {
+		width: 100%;
+		height: 100%;
+		line-height: 1rem;
+	}
+	.each-way-concret {
+		font-weight: 0.35rem;
+		color: #333333;
+		position: absolute;
+		top: 0.35rem;
+		right: 0px;
+	}
+	.order-status-box{
+		width: 90%;
+		height: 2.1rem;
+		position: relative;
+		margin: 0 auto;
+	}
+	.each-order-status-box {
+		width: 25%;
+		height: 100%;
+		float: left;
+		position: relative;
+	}
+	.order-status-title {
+		width: 100%;
+		text-align: center;
+		font-size: 0.35rem;
+		color: #999999;
+	}
+	.line-box {
+		width: 100%;
+		height: 0.1rem;
+		position: absolute;
+		top: 0.9rem;
+		left: 0.7rem;
+		background-color: #d9d9d9;
+	}
+	.ball-box {
+		width: 0.5rem;
+		height: 0.5rem;
+		background-color: #d9d9d9;
+		top: 0.7rem;
+		left: 0.7rem;
+		position: absolute;
+		border-radius: 100%;
+	}
+	.ball-box-on {
+		width: 0.3rem;
+		height: 0.3rem;
+		background-color: #f5ef49;
+		top: 0.72rem;
+		left: 0.72rem;
+		position: absolute;
+		border-radius: 100%;
+		border: 0.1rem solid #f9626d;
+	}
+	.order-time-box {
+		margin-top: 1rem;
+		font-size: 0.3rem;
+		color: #c6c3c3;
+		text-align: center;
+	}
+
+	/*底部*/
+		.bottom-bar-default {
+			width: 100%;
+			height: 1.25rem;
+		}
+		.bottom-bar-box {
+			width: 100%;
+			height: 1.1rem;
+			position: fixed;
+			bottom: 0px;
+			background-color: #FFF;
+			z-index: 99;
+			border=top: 0.01rem solid #bebebe;
+		}
+		.left-bar-box {
+			width: 32%;
+			height: 100%;
+			float: left;
+			position: relative;
+		}
+		.right-bar-box {
+			width: 68%;
+			float: left;
+			height: 100%;
+			position: relative;
+		}
+		/*加入购物车*/
+		.cancel-order-btn {
+			width: 1.4rem;
+			height: 0.60rem;
+			line-height: 0.60rem;
+			color: #c7c8c6;
+			border: 0.03rem solid #c7c8c6;
+			background: #FFF;
+			text-align: center;
+			font-size: 0.24rem;
+			font-weight: 900;
+			border-radius: 0.15rem;
+			position: absolute;
+			top: 0.2rem;
+			right: 2rem;
+		}
+		/*立即购买*/
+		.buy-right-now-btn {
+			width: 1.4rem;
+			height: 0.60rem;
+			line-height: 0.60rem;
+			color: #FFF;
+			background-color: #f9626d;
+			text-align: center;
+			font-size: 0.24rem;
+			font-weight: 900;
+			border-radius: 0.15rem;
+			position: absolute;
+			top: 0.2rem;
+			right: 0.5rem;
+		}

@@ -1,0 +1,467 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>增加模板</title>
+    <link rel="stylesheet" href="../../layuiadmin/layui/css/layui.css" media="all">
+    <link rel="stylesheet" href="../../layuiadmin/style/table.css" media="all">
+    <style type="text/css">
+    body {
+        background-color: #FFF;
+    }
+    .edit-table {
+      height: 230px;
+      overflow-y: scroll;
+    }
+    .move-up,.move-down,.remove{
+      float:right;
+      /*margin-right: 10px;*/
+    }
+    .remove {
+      margin-left: 10px;
+    }
+    /*化学元素样式*/
+    .item-type-7 input{
+      width: 27px;
+      display: inline-block;
+      padding-left: 0px;
+        text-align: center;
+    }
+    </style>
+</head>
+<body>
+    <form class="layui-form" action="">
+        <div class="layui-form-item">
+            <div class="layui-inline">
+              <label class="layui-form-label">档案名称</label>
+              <div class="layui-input-inline" style="">
+                <input type="text" id="name" name="name" required lay-verify="required" autocomplete="off" class="layui-input" placeholder="请输入分类名称">
+              </div>
+            </div>
+        </div>
+
+        <div class="layui-form-item">
+            <div class="layui-block">
+              <label class="layui-form-label">关联分类</label>
+              <div class="layui-input-block" style="" id="mainBodys">
+                  
+              </div>
+            </div>
+        </div>   
+
+        <div class="layui-form-item layui-form-text">
+          <label class="layui-form-label">编辑页面</label>
+          <div class="layui-input-block">
+            <div id="editTable" name="edit-table" placeholder="请输入内容" class="layui-textarea edit-table"></div>
+          </div>
+        </div>     
+
+        <div>
+
+            <!-- 输入框 -->           
+            <div class="layui-input-block" style="">
+              <div class="layui-row layui-col-space10">
+                <div class="layui-col-md2">
+                  <label class="layui-form-label">输入框</label>
+                </div>
+                <div class="layui-col-md2">
+                  <input type="text" class="label layui-input" placeholder="请输入标题" autocomplete="off">
+                  <input type="hidden"class="input-type" value="1">
+                </div>
+                <div class="layui-col-md2">
+                  <input type="text" class="placeholder layui-input" placeholder="请输入提示文本" autocomplete="off">
+                </div>
+                <div class="layui-col-md2">
+                  <input type="checkbox" class="isDateTime layui-input" autocomplete="off" title="是否是日期">
+                </div>
+                <div class="layui-col-md2">
+                   <button type="button" class="layui-btn layui-btn-sm layui-btn-normal" onclick="createNode(this)">添加</button>
+                </div>
+              </div>
+            </div>
+
+            <!-- 文本框 -->           
+            <div class="layui-input-block" style="">
+              <div class="layui-row layui-col-space10">
+                <div class="layui-col-md2">
+                  <label class="layui-form-label">文本框</label>
+                </div>
+                <div class="layui-col-md2">
+                  <input type="text" class="label layui-input" placeholder="请输入标题" autocomplete="off">
+                  <input type="hidden"class="input-type" value="2">
+                </div>
+                <div class="layui-col-md2">
+                  <input type="text" class="placeholder layui-input" placeholder="请输入提示文本" autocomplete="off">
+                </div>
+                <div class="layui-col-md2">
+                   <button type="button" class="layui-btn layui-btn-sm layui-btn-normal" onclick="createNode(this)">添加</button>
+                </div>
+              </div>
+            </div>
+
+            <!-- 图片框 -->           
+            <div class="layui-input-block" style="">
+              <div class="layui-row layui-col-space10">
+                <div class="layui-col-md2">
+                  <label class="layui-form-label">图片框</label>
+                </div>
+                <div class="layui-col-md2">
+                  <input type="text" class="label layui-input" placeholder="请输入标题" autocomplete="off">
+                  <input type="hidden"class="input-type" value="3">
+                </div>
+                <div class="layui-col-md2">
+                   <button type="button" class="layui-btn layui-btn-sm layui-btn-normal" onclick="createNode(this)">添加</button>
+                </div>
+              </div>
+            </div>
+
+            <!-- 文本框 -->           
+            <div class="layui-input-block" style="">
+              <div class="layui-row layui-col-space10">
+                <div class="layui-col-md2">
+                  <label class="layui-form-label">化学元素npk</label>
+                </div>
+                <div class="layui-col-md2">
+                  <input type="text" class="label layui-input" placeholder="请输入标题" autocomplete="off">
+                  <input type="hidden"class="input-type" value="7">
+                </div>
+                <div class="layui-col-md2">
+                   <button type="button" class="layui-btn layui-btn-sm layui-btn-normal" onclick="createNode(this)">添加</button>
+                </div>
+              </div>
+            </div>
+
+        </div>
+
+        <div class="layui-form-item">
+            <div class="layui-input-block">
+                <button class="layui-btn" lay-submit lay-filter="submitForm">立即提交</button>
+                <a href="javascript:history.back(-1);" class="layui-btn layui-btn-warm">返回</a>
+            </div>
+        </div>
+        
+    </form>
+</body>
+
+<script type="text/javascript" src="../../layuiadmin/layui/layui.js"></script>
+<script type="text/javascript" src="../../layuiadmin/js/global.js"></script>
+<script type="text/javascript">
+
+// 增加节点
+function createNode(obj)
+{
+
+  // 获取节点类型
+  var curType = $(obj).parent().parent().find(".input-type").val();
+  switch( parseInt(curType) ) {
+    case 1:
+      createInput(obj);
+    break;
+    case 2:
+      createTextarea(obj);
+    break;
+    case 3:
+      createImageFile(obj);
+    break;
+    case 7:
+      createInputNPK(obj);
+    break;
+  }
+}
+
+// 增加输入框
+function createInput(obj)
+{
+  
+  var labelStr = $(obj).parent().parent().find('.label').val();
+  var placeholderStr = $(obj).parent().parent().find('.placeholder').val();
+  var hasDateTime = $(obj).parent().parent().find(".layui-form-checkbox").hasClass("layui-form-checked");
+
+  if( labelStr=="" ) {
+    layer.msg('请添加标题', {time: 2000});
+    return false;
+  } 
+  var nodeStr = "";
+  nodeStr += '<div class="layui-form-item">';
+  nodeStr +=   '<label class="layui-form-label send-label">' + labelStr + '</label>';
+  nodeStr +=   '<input type="hidden" class="send-type" value="1" >';
+  nodeStr +=   '<input type="hidden" class="send-is-datetime" value="' + hasDateTime + '" >';
+  nodeStr +=   '<div class="layui-input-inline">';
+  nodeStr +=     '<input type="text" autocomplete="off" class="layui-input send-placeholder" placeholder="' + placeholderStr + '">';
+  nodeStr +=   '</div>';
+
+  /*如果是日期进行标记*/
+  if( hasDateTime ) {
+    nodeStr +=   '<div class="layui-form-mid layui-word-aux"><img src="/images/time-icon.png"></div>';
+  }
+
+  nodeStr += handlerStr;
+
+  nodeStr += '</div>';
+
+  $("#editTable").append( nodeStr );
+
+  // 清空
+  $(obj).parent().parent().find('.label').val("");
+  $(obj).parent().parent().find('.placeholder').val("");
+  if( hasDateTime ) {
+    $(obj).parent().parent().find(".layui-form-checkbox").removeClass("layui-form-checked");
+  }
+
+}
+
+// 增加文本框
+function createTextarea(obj)
+{
+  
+  var labelStr = $(obj).parent().parent().find('.label').val();
+  var placeholderStr = $(obj).parent().parent().find('.placeholder').val();
+
+  if( labelStr=="" ) {
+    layer.msg('请添加标题', {time: 2000});
+    return false;
+  } 
+  var nodeStr = "";
+  nodeStr += '<div class="layui-form-item">';
+  nodeStr +=   '<label class="layui-form-label send-label">' + labelStr + '</label>';
+  nodeStr +=   '<input type="hidden" class="send-type" value="2" >';
+  nodeStr +=   '<div class="layui-input-inline">';
+  nodeStr +=       '<textarea placeholder="' + placeholderStr + '" class="layui-textarea send-placeholder"></textarea>';
+  nodeStr +=   '</div>';
+  nodeStr += handlerStr;
+
+  nodeStr += '</div>';
+
+  $("#editTable").append( nodeStr );
+
+  // 清空
+  $(obj).parent().parent().find('.label').val("");
+  $(obj).parent().parent().find('.placeholder').val("");
+
+}
+
+// 增加图片框
+function createImageFile(obj)
+{
+  
+  var labelStr = $(obj).parent().parent().find('.label').val();
+
+  if( labelStr=="" ) {
+    // layer.msg('请添加标题', {time: 2000});
+    // return false;
+  } 
+  var nodeStr = "";
+  nodeStr += '<div class="layui-form-item">';
+  nodeStr +=   '<label class="layui-form-label send-label">' + labelStr + '</label>';
+  nodeStr +=   '<input type="hidden" class="send-type" value="3" >';
+  nodeStr +=   '<div class="layui-input-inline">';
+  nodeStr +=       '<input type="file" autocomplete="off" class="layui-input" >';
+  nodeStr +=   '</div>';
+  nodeStr += handlerStr;
+
+  nodeStr += '</div>';
+
+  $("#editTable").append( nodeStr );
+
+  // 清空
+  $(obj).parent().parent().find('.label').val("");
+
+}
+
+// 增加化学元素输入框
+function createInputNPK(obj)
+{
+  
+  var labelStr = $(obj).parent().parent().find('.label').val();
+
+  var nodeStr = "";
+  nodeStr += '<div class="layui-form-item item-type-7">';
+  nodeStr +=   '<label class="layui-form-label send-label">' + labelStr + '</label>';
+  nodeStr +=   '<input type="hidden" class="send-type" value="7" >';
+  nodeStr +=   '<div class="layui-input-inline ">';
+  nodeStr +=     '<label class="move-left-10">N</label>(<input type="text" autocomplete="off" class="layui-input" maxLength="3">)P(<input type="text" autocomplete="off" class="layui-input" maxLength="3">)K(<input type="text" autocomplete="off" class="layui-input" maxLength="3">)';
+  nodeStr +=   '</div>';
+  nodeStr += handlerStr;
+
+  nodeStr += '</div>';
+
+  $("#editTable").append( nodeStr );
+
+  // 清空
+  $(obj).parent().parent().find('.label').val("");
+
+}
+
+/*移除节点*/
+function removeNode(obj)
+{ 
+  $(obj).parent().remove();
+}
+
+/*下移结点*/
+function moveDownNode(obj)
+{
+  $(obj).parent().next().after($(obj).parent());
+}
+
+/*上移结点*/
+function moveUpNode(obj)
+{
+  $(obj).parent().prev().before($(obj).parent());
+}
+
+layui.config({
+        base: '../../layuiadmin/' //静态资源所在路径
+    }).extend({
+        index: 'lib/index' //主入口模块
+    }).use([ 'jquery', 'element', 'table','form', 'tree', "laydate", "index", "set", "layer"], function () {
+        $ = layui.$;
+        var element = layui.element;
+        var table = layui.table;
+        var form = layui.form;
+        var laydate = layui.laydate;
+        layer = layui.layer;
+        topcateid = 0;
+
+        username = getCookie('username');
+        accessToken = getCookie('accessToken');
+        var host = parent.layui.setter.host;
+
+        var protocol = window.location.protocol+"//";
+        var urlHost = window.location.host;
+
+        handlerStr = '<div class="remove layui-btn layui-btn-sm layui-btn-danger" onclick="removeNode(this)">X</div><div class="move-down layui-btn layui-btn-sm layui-btn-warm" onclick="moveDownNode(this)">下移</div><div class="move-up layui-btn layui-btn-sm" onclick="moveUpNode(this)">上移</div>';
+
+
+        /*获取档案分类*/
+        var ok = true;
+        $.ajax({
+            url: host + "/api/v1/archiveTemplateCategory/lists",
+            type: "GET",
+            data: {
+              access_token: accessToken,
+              user_login: username,
+              page: 1,
+              size: 1000,
+              time: new Date()
+            },
+            async: false,
+            success: function(response){
+
+              // identityFailure(response['status']['code']);
+
+              if( !response['totalCount'] ) {
+                ok = false;
+                return false;
+              }
+
+              var str = '';
+              var classData = response['data'];
+              var resumeStr = "";
+
+              if( classData.length!=0 ) {
+                for (var i = 0; i < classData.length; i++) {
+
+                  resumeStr = "";
+                  if(classData[i]['resume']!="") {
+                    resumeStr = "(" + classData[i]['resume'] + ")";
+                  }
+
+                  str += '<input type="checkbox" name="templateClass[]" title="' + classData[i]['name'] + resumeStr + '" value="' + classData[i]['id'] + '">';
+                };
+
+                $("#mainBodys").html(str);
+
+                form.render();
+              }
+
+            }
+          });
+
+        form.on('submit(submitForm)', function(data){
+
+            var postHtml = $("#editTable").html();
+            if( postHtml=="" ) {
+              layer.msg("请进行模板添加", {time: 2000});
+              return false;
+            }
+
+            /*进行json转化*/
+            var jsonArray = new Array();
+            $("#editTable").find(".layui-form-item").each(function(key){
+
+                  var dataObj = new Object();
+
+                  var postLabel = $.trim( $(this).find(".send-label").text() );
+                  var postType = $.trim( $(this).find(".send-type").val() );
+                  var postPlaceholder = $.trim( $(this).find(".send-placeholder").attr("placeholder") );
+
+                  dataObj['type'] = postType;
+
+                  if(postType==1) {
+                    var isDateTime = $.trim( $(this).find(".send-is-datetime").val() );
+                    if( isDateTime=="true" ) {
+                      dataObj['isDateTime'] = 1;
+                    }
+                  }
+
+                  if( postPlaceholder!="" ) {
+                      dataObj['placeholder'] = postPlaceholder;
+                  }
+
+                  if( postLabel!="" ) {
+                    dataObj['label'] = postLabel;
+                  }
+
+                  jsonArray.push( dataObj );
+            });
+
+            var clickObj = data.elem;
+            $(clickObj).attr("disabled", true);
+
+            var postObject = new Object();
+
+            postObject['user_login'] = username;
+            postObject['access_token'] = accessToken;
+            postObject['name'] = data.field.name;
+            postObject['code'] = postHtml;
+            postObject['modelData'] = JSON.stringify( jsonArray );
+
+            var idsArr = new Array();
+            $("#mainBodys").find(".layui-form-checkbox").each(function(){
+                if( $(this).hasClass("layui-form-checked") ) {
+                    idsArr.push( $(this).prev().val() );
+                }
+            });
+
+            if( idsArr.length!=0 ) {
+              postObject['mainBodys'] = idsArr.join(",");
+            }
+
+            $.ajax({
+              url: host + "/api/v1/archiveTemplate/create",
+              type: "POST",
+              data: postObject,
+              async: false,
+              success: function(response){
+
+                identityFailure(response['status']['code']);
+                
+                if( response['status']['success'] ) {
+                  layer.msg("添加成功", {time: 2000});
+                  setTimeout(function(){
+                    window.location.reload();
+                  }, 1400);
+                } else {
+                  layer.msg(response['status']['message'], {time: 2000});
+                  $(clickObj).attr("disabled", false);
+                }
+              }
+            });
+
+            return false; //阻止表单跳转。如果需要表单跳转，去掉这段即可。
+
+        });
+
+    });
+</script>

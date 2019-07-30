@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>文章分类详情</title>
+    <link rel="stylesheet" href="../../layuiadmin/layui/css/layui.css" media="all">
+    <link rel="stylesheet" href="../../layuiadmin/style/table.css" media="all">
+    <style type="text/css">
+    body {
+        background-color: #FFF;
+    }
+    </style>
+</head>
+<body>
+    <form class="layui-form" action="">
+
+        <div class="layui-form-item">
+            <div class="layui-inline">
+              <label class="layui-form-label">分类名称</label>
+              <div class="layui-input-inline" style="">
+                <input type="text" id="class_name" name="class_name" required lay-verify="required" autocomplete="off" class="layui-input" placeholder="请输入分类名称">
+              </div>
+            </div>
+        </div>
+
+        <div class="layui-form-item">
+          <label class="layui-form-label">封面</label>
+          <div class="layui-input-inline">
+            <input name="cover" lay-verify="required" id="LAY_avatarSrc" placeholder="图片地址" value="" class="layui-input">
+          </div>
+          <div class="layui-input-inline layui-btn-container" style="width: auto;">
+            <button type="button" class="layui-btn layui-btn-primary" id="LAY_avatarUpload">
+              <i class="layui-icon">&#xe67c;</i>上传图片
+            </button>
+            <button class="layui-btn layui-btn-primary" type="button" layadmin-event="avartatPreview">查看图片</button >
+          </div>
+        </div>
+
+        <div class="layui-form-item">
+            <div class="layui-block">
+              <label class="layui-form-label">选择上级文章分类</label>
+              <div class="layui-input-inline" style="">
+                <select name="pid" id="mainBodys">
+                  <option value=""></option>
+                </select>
+              </div>
+            </div>
+        </div>        
+
+        <div class="layui-form-item">
+            <div class="layui-input-block">
+                <a href="javascript:history.back(-1);" class="layui-btn layui-btn-warm">返回</a>
+            </div>
+        </div>
+        
+    </form>
+</body>
+
+<script type="text/javascript" src="../../layuiadmin/layui/layui.js"></script>
+<script type="text/javascript" src="../../layuiadmin/js/global.js"></script>
+<script type="text/javascript">
+
+layui.config({
+        base: '../../layuiadmin/' //静态资源所在路径
+    }).extend({
+        index: 'lib/index' //主入口模块
+    }).use([ 'jquery', 'element', 'table','form', 'tree', "laydate", "index", "set"], function () {
+        $ = layui.$;
+        var element = layui.element;
+        var table = layui.table;
+        var form = layui.form;
+        var laydate = layui.laydate;
+        topcateid = 0;
+
+        username = getCookie('username');
+        accessToken = getCookie('accessToken');
+        var host = parent.layui.setter.host;
+
+        var protocol = window.location.protocol+"//";
+        var urlHost = window.location.host;
+
+        var curId = getCookie("recordId");
+        var pclass_id = 0;
+        var ok = true;
+
+        /*获取详情*/
+        $.ajax({
+            url : host + '/api/v1/NewsClass/read',
+            type : 'GET',
+            dataType: 'json',
+            data: {
+                access_token: accessToken,
+                user_login: username,
+                id: curId,
+                time: new Date()
+            },
+            async: false,
+            cache: false,
+            success : function (res) {
+
+              identityFailure(res.status.code);
+
+                if ( !res.status.success){ 
+                  ok = false;
+                  layer.msg(res['status']['message'], {time: 2000});
+                  return false;
+                }
+
+                var curData = res['data']['data'];
+
+                console.log(curData);
+                if( curData!=null || curData.length!=0 ) {
+                  $("#class_name").val( curData['class_name'] );
+
+                  if( curData['cover']!="" ) {
+                    $("#LAY_avatarSrc").val( protocol + urlHost + curData['cover'] );
+                  }  
+
+                  pclass_id = curData['pclass_id'];
+
+                }
+
+            }
+        });
+
+        /*所有文章分类*/
+        $.ajax({
+            url : host + '/api/v1/NewsClass/allList',
+            type : 'GET',
+            dataType: 'json',
+            data: {
+                access_token: accessToken,
+                user_login: username,
+                time: new Date()
+            },
+            async: false,
+            cache: false,
+            success : function (res) {
+
+              identityFailure(res.status.code);
+              
+                var allLists = res['data'];
+                if (res.status.code == '001'){
+                    
+                    if( allLists!=null || allLists.length!=0 ) {
+
+                      var str = '';
+                      var selectedStr = '';
+                      for (var i = 0; i < allLists.length; i++) {
+
+                        selectedStr = '';
+                        if( pclass_id==allLists[i]['id'] ) {
+                          selectedStr = " selected ";
+                        }
+                        str += '"<option value="' + allLists[i]['id'] + '" ' + selectedStr + ' >' + allLists[i]['class_name'] + '</option>"';
+                      }
+
+                      $("#mainBodys").append( str );
+                      form.render();
+
+                    }
+                    return false;
+
+                }
+            }
+        });
+
+    });
+</script>

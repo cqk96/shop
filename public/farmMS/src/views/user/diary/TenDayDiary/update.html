@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>修改日志详情</title>
+    <link rel="stylesheet" href="../../../../layuiadmin/layui/css/layui.css" media="all">
+    <link rel="stylesheet" href="../../../../layuiadmin/style/table.css" media="all">
+    <style type="text/css">
+    body {
+        background-color: #FFF;
+    }
+    </style>
+</head>
+<body>
+    <form class="layui-form" action="">
+        <div class="layui-form-item">
+            <label class="layui-form-label">班组</label>
+            <div class="layui-input-block">
+              <select name="department_id" lay-verify="required" id="departmentId">
+                    <option value=""></option>
+              </select>
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">地块</label>
+            <div class="layui-input-block">
+              <select name="acre_id" lay-verify="required" id="acreId">
+                    <option value=""></option>
+              </select>
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">期号</label>
+            <div class="layui-input-inline">
+              <input type="text" id="issue" name="issue" required lay-verify="required|number" placeholder="请输入期号" autocomplete="off" class="layui-input">
+            </div>
+        </div> 
+        <div class="layui-form-item">
+            <div class="layui-inline">
+              <label class="layui-form-label">时间区间</label>
+              <div class="layui-input-inline" style="width: 100px;">
+                <input type="text" id="start_time" name="start_time" required lay-verify="required|date" autocomplete="off" class="layui-input">
+              </div>
+              <div class="layui-form-mid">-</div>
+              <div class="layui-input-inline" style="width: 100px;">
+                <input type="text" id="end_time" name="end_time" required lay-verify="required|date" autocomplete="off" class="layui-input">
+              </div>
+            </div>
+        </div>
+        <div class="layui-form-item layui-form-text">
+            <label class="layui-form-label">本期工作内容</label>
+            <div class="layui-input-block">
+              <textarea id="current_work_content" name="current_work_content" required lay-verify="required" placeholder="请输入本期工作内容" class="layui-textarea"></textarea>
+            </div>
+        </div>
+         <div class="layui-form-item">
+            <label class="layui-form-label">下期工作计划</label>
+            <div class="layui-input-block">
+                <textarea id="next_working_plan" name="next_working_plan" placeholder="请输入下期工作计划" class="layui-textarea"></textarea>
+            </div>
+        </div> 
+        <div class="layui-form-item">
+            <label class="layui-form-label">班组成员数</label>
+            <div class="layui-input-inline">
+              <input type="text" id="number_of_group_members" name="number_of_group_members" required lay-verify="required|number" placeholder="请输入班组成员数" autocomplete="off" class="layui-input">
+            </div>
+        </div> 
+         <div class="layui-form-item">
+            <label class="layui-form-label">机动人员数</label>
+            <div class="layui-input-inline">
+              <input type="text" id="working_members_count" name="working_members_count" required lay-verify="required|number" placeholder="请输入机动人员数" autocomplete="off" class="layui-input">
+            </div>
+        </div> 
+        <div class="layui-form-item">
+            <label class="layui-form-label">本期完成情况</label>
+            <div class="layui-input-block">
+                <textarea id="completion_of_current_term" name="completion_of_current_term" required lay-verify="required" placeholder="请输入本期完成情况" class="layui-textarea"></textarea>
+            </div>
+        </div> 
+        <div class="layui-form-item">
+            <label class="layui-form-label">存在问题与解决措施</label>
+            <div class="layui-input-block">
+                <textarea id="existing_problems" name="existing_problems" placeholder="请输入存在问题与解决措施" class="layui-textarea"></textarea>
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">上期提出的主要问题整改、落实情况</label>
+            <div class="layui-input-block">
+                <textarea id="prior_period_existing_problems" name="prior_period_existing_problems" placeholder="请输入上期提出的主要问题整改、落实情况" class="layui-textarea"></textarea>
+            </div>
+        </div>
+
+        <div class="layui-form-item">
+            <div class="layui-input-block">
+                <button class="layui-btn" lay-submit lay-filter="submitForm">立即提交</button>
+                <a href="javascript:history.back(-1);" class="layui-btn layui-btn-warm">返回</a>
+            </div>
+        </div>
+        
+    </form>
+</body>
+
+<script type="text/javascript" src="../../../../layuiadmin/layui/layui.js"></script>
+<script type="text/javascript" src="../../../../layuiadmin/js/global.js"></script>
+<script type="text/javascript">
+
+layui.config({
+        base: '../../../layuiadmin/' //静态资源所在路径
+    }).extend({
+        index: 'lib/index' //主入口模块
+    }).use([ 'jquery', 'element', 'table','form', 'tree', 'laydate'], function () {
+        $ = layui.$;
+        var element = layui.element;
+        var table = layui.table;
+        var form = layui.form;
+        var laydate = layui.laydate;
+        topcateid = 0;
+
+        username = getCookie('username');
+        accessToken = getCookie('accessToken');
+        var host = parent.layui.setter.host;
+
+        /*@todo要获取 url上id的值*/
+        var curId = getCookie('diaryId');
+
+        // 先获取 用户工作过的地块以及所在班组
+
+        // 判断是否可以执行查看详情操作
+        var ok = true;
+
+        var departments = new Array();
+        var acres = new Array();
+
+        $.ajax({
+            url: "/api/v1/user/department/groupMembers",
+            type: "GET",
+            dataType: "JSON",
+            cache: false,
+            async: false,
+            data: {
+                user_login: username,
+                access_token: accessToken,
+                time: new Date()
+            },
+            success: function(response){
+
+                identityFailure(response['status']['code']);
+
+                if (response.status.code != '001'){
+                    ok = false;
+                    layer.msg(response.status.message);
+                    return false;
+                }
+                departments = response['data'];
+            }
+        })
+
+        $.ajax({
+            url: "/api/v1/user/acre/works",
+            type: "GET",
+            dataType: "JSON",
+            cache: false,
+            async: false,
+            data: {
+                user_login: username,
+                access_token: accessToken,
+                time: new Date()
+            },
+            success: function(response){
+
+                identityFailure(response['status']['code']);
+
+                if (response.status.code != '001'){
+                    ok = false;
+                    layer.msg(response.status.message);
+                    return false;
+                }
+
+                acres = response['data'];
+            }
+        })
+
+        if( ok ) {
+            $.ajax({
+                url: host + "/api/v1/diary/tenDayDiary/detail",
+                type: "GET",
+                cache: false,
+                async: false,
+                data: {
+                    access_token: accessToken,
+                    user_login: username,
+                    id: curId,
+                    time: new Date()
+                },
+                success : function (res) {
+
+                    identityFailure(res.status.code);
+
+                    if (res.status.code != '001'){
+                        layer.msg(''+res.status.message+'');
+                        return false;
+                    }
+
+                    /*部门选择*/
+                    var str = '';
+                    var selectedStr = '';
+                    for(var i=0; i<departments.length; i++) {
+
+                        selectedStr = res['data']['departmentName']==departments[i]['name']? " selected ":"";
+                        str += "<option value='" + departments[i]['id'] + "' " + selectedStr + " >" + departments[i]['name'] + "</option>";
+                    }
+                    $("#departmentId").append( str );
+
+                    /*地块选择*/
+                    var str = '';
+                    var selectedStr = '';
+                    for(var i=0; i<acres.length; i++) {
+                        selectedStr = res['data']['acreName']==acres[i]['name']? " selected ":"";
+                        str += "<option value='" + acres[i]['id'] + "' " + selectedStr + " >" + acres[i]['name'] + "</option>";
+                    }
+                    $("#acreId").append( str );
+                    var next_working_plan = res['data']['next_working_plan']==""? "":res['data']['next_working_plan'];
+                    var existing_problems = res['data']['existing_problems']==""? "":res['data']['existing_problems'];
+                    var prior_period_existing_problems = res['data']['prior_period_existing_problems']==""? "":res['data']['prior_period_existing_problems'];
+
+                    var farmLeaderEvaluation = res['data']['farmLeaderEvaluation']==""? "未填写":res['data']['farmLeaderEvaluation'];
+                    var companyExecutivesEvaluation = res['data']['companyExecutivesEvaluation']==""? "未填写":res['data']['companyExecutivesEvaluation'];
+                    
+                    
+                    $("#issue").val( res['data']['issue'] );
+                    $("#start_time").val( res['data']['start_time'] );
+                    $("#end_time").val( res['data']['end_time'] );
+                    $("#current_work_content").val( res['data']['current_work_content'] );
+                    $("#next_working_plan").val( next_working_plan );
+                    $("#number_of_group_members").val( res['data']['number_of_group_members'] );
+                    $("#working_members_count").val( res['data']['working_members_count'] );
+                    $("#completion_of_current_term").val( res['data']['completion_of_current_term'] );
+                    $("#existing_problems").val( existing_problems );
+                    $("#prior_period_existing_problems").val( prior_period_existing_problems );
+                    
+                },
+            });
+        }
+        
+        laydate.render({
+          elem: '#start_time' //指定元素
+        });
+
+        laydate.render({
+          elem: '#end_time' //指定元素
+        });
+        form.render();
+
+        form.on('submit(submitForm)', function(data){
+            var clickObj = data.elem;
+            $(clickObj).attr("disabled", true);
+            var postData = data.field;
+
+            postData['user_login'] = username;
+            postData['access_token'] = accessToken;
+            postData['id'] = curId;
+
+            /*年份采用起始时间区间年份*/
+            postData['year'] = postData['start_time'].substr(0, 4);
+
+            $.ajax({
+              url: host + "/api/v1/diary/tenDayDiary/update",
+              type: "POST",
+              data: postData,
+              async: false,
+              success: function(response){
+
+                identityFailure(response['status']['code']);
+                
+                if( response['status']['success'] ) {
+                  layer.msg("修改成功", {time: 2000});
+                  setTimeout(function(){
+                    window.location.reload();
+                  }, 1400);
+                } else {
+                  layer.msg(response['status']['message'], {time: 2000});
+                  $(clickObj).attr("disabled", false);
+                }
+              }
+            });
+            return false; //阻止表单跳转。如果需要表单跳转，去掉这段即可。
+          });
+    });
+</script>

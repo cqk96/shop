@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>模板分类修改</title>
+    <link rel="stylesheet" href="../../layuiadmin/layui/css/layui.css" media="all">
+    <link rel="stylesheet" href="../../layuiadmin/style/table.css" media="all">
+    <style type="text/css">
+    body {
+        background-color: #FFF;
+    }
+    </style>
+</head>
+<body>
+    <form class="layui-form" action="">
+        <div class="layui-form-item">
+            <div class="layui-inline">
+              <label class="layui-form-label">分类名称</label>
+              <div class="layui-input-inline" style="">
+                <input type="text" id="name" name="name" required lay-verify="required" autocomplete="off" class="layui-input" placeholder="请输入分类名称">
+              </div>
+            </div>
+        </div>
+
+        <div class="layui-form-item">
+            <div class="layui-inline">
+              <label class="layui-form-label">简述</label>
+              <div class="layui-input-inline" style="">
+                <input type="text" id="resume" name="resume" autocomplete="off" class="layui-input" placeholder="请输入简述">
+              </div>
+            </div>
+        </div>
+        
+        <div class="layui-form-item">
+          <label class="layui-form-label">封面</label>
+          <div class="layui-input-inline">
+            <input name="cover" lay-verify="required" id="LAY_avatarSrc" placeholder="图片地址" value="" class="layui-input">
+          </div>
+          <div class="layui-input-inline layui-btn-container" style="width: auto;">
+            <button type="button" class="layui-btn layui-btn-primary" id="LAY_avatarUpload">
+              <i class="layui-icon">&#xe67c;</i>上传图片
+            </button>
+            <button class="layui-btn layui-btn-primary" type="button" layadmin-event="avartatPreview">查看图片</button >
+          </div>
+        </div>
+
+        <div class="layui-form-item">
+            <div class="layui-block">
+              <label class="layui-form-label">关联主体</label>
+              <div class="layui-input-block" style="" id="mainBodys">
+                    <input type="checkbox" name="mainbody[]" title="农场" value="1">
+                    <input type="checkbox" name="mainbody[]" title="地块" value="2">
+                    <input type="checkbox" name="mainbody[]" title="水果片区" value="3">
+                    <input type="checkbox" name="mainbody[]" title="作物" value="4">
+                    <input type="checkbox" name="mainbody[]" title="蔬菜片区" value="5">
+                    <input type="checkbox" name="mainbody[]" title="部门" value="6">
+                    <input type="checkbox" name="mainbody[]" title="班组织" value="7">
+              </div>
+            </div>
+        </div>        
+
+        <div class="layui-form-item">
+            <div class="layui-input-block">
+                <button class="layui-btn" lay-submit lay-filter="submitForm">立即提交</button>
+                <a href="javascript:history.back(-1);" class="layui-btn layui-btn-warm">返回</a>
+            </div>
+        </div>
+        
+    </form>
+</body>
+
+<script type="text/javascript" src="../../layuiadmin/layui/layui.js"></script>
+<script type="text/javascript" src="../../layuiadmin/js/global.js"></script>
+<script type="text/javascript">
+
+layui.config({
+        base: '../../layuiadmin/' //静态资源所在路径
+    }).extend({
+        index: 'lib/index' //主入口模块
+    }).use([ 'jquery', 'element', 'table','form', 'tree', "laydate", "index", "set"], function () {
+        $ = layui.$;
+        var element = layui.element;
+        var table = layui.table;
+        var form = layui.form;
+        var laydate = layui.laydate;
+        topcateid = 0;
+
+        username = getCookie('username');
+        accessToken = getCookie('accessToken');
+        var host = parent.layui.setter.host;
+
+        var protocol = window.location.protocol+"//";
+        var urlHost = window.location.host;
+
+        var curId = getCookie("recordId");
+
+        form.render();
+
+        //
+        $.ajax({
+              url: host + "/api/v1/archiveTemplateCategory/read",
+              type: "GET",
+              data: {
+                access_token: accessToken,
+                user_login: username,
+                id: curId,
+                time: new Date()
+              },
+              async: false,
+              success: function(response){
+
+                identityFailure(response['status']['code']);
+
+                // console.log( response );
+                if( !response['status']['success'] ) {
+                  layer.msg(response['status']['message'], {time: 2000});
+                  return false;
+                }
+
+                $("#name").val( response['data']['name'] );
+                $("#resume").val( response['data']['resume'] );
+                $("#LAY_avatarSrc").val( protocol + urlHost + response['data']['cover'] );
+
+                var mainBodys = response['data']['mainBodys'];
+
+                if( mainBodys.length!=0 ) {
+                  for(var i=0; i<mainBodys.length; i++ ) {
+                    if( mainBodys[i]['checked'] ) {
+                      $("input[name='mainbody[]']").eq(mainBodys[i]['id']-1).attr("checked", true);
+                    }
+                  }
+                }
+
+                form.render();
+            }
+        });
+
+        form.on('submit(submitForm)', function(data){
+            var clickObj = data.elem;
+            $(clickObj).attr("disabled", true);
+
+            var postObject = new Object();
+            // var postData = data.field;
+
+            var curCover = data.field.cover;
+            var postAvatar = curCover.replace(protocol + urlHost, "");
+
+            // 选择 mainBodys
+            /*获取选中状态*/
+            var idsArr = new Array();
+            $("#mainBodys").find(".layui-form-checkbox").each(function(){
+                if( $(this).hasClass("layui-form-checked") ) {
+                    idsArr.push( $(this).prev().val() );
+                }
+            });
+
+            postObject['user_login'] = username;
+            postObject['access_token'] = accessToken;
+            postObject['id'] = curId;
+            postObject['cover'] = postAvatar;
+            postObject['name'] = data.field.name;
+
+            if( data.field.resume!="" ) {
+              postObject['resume'] = data.field.resume;
+            }
+
+            if( idsArr.length!=0 ) {
+              postObject['mainBodys'] = idsArr.join(",");
+            } else {
+              postObject['mainBodyEmpty'] = 1;
+            }
+
+            $.ajax({
+              url: host + "/api/v1/archiveTemplateCategory/update",
+              type: "POST",
+              data: postObject,
+              async: false,
+              success: function(response){
+
+                identityFailure(response['status']['code']);
+                
+                if( response['status']['success'] ) {
+                  layer.msg("修改成功", {time: 2000});
+                  setTimeout(function(){
+                    window.location.reload();
+                  }, 1400);
+                } else {
+                  layer.msg(response['status']['message'], {time: 2000});
+                  $(clickObj).attr("disabled", false);
+                }
+              }
+            });
+            return false; //阻止表单跳转。如果需要表单跳转，去掉这段即可。
+        });
+
+    });
+</script>

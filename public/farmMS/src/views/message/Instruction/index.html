@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>指令管理</title>
+    <link rel="stylesheet" href="../../../layuiadmin/layui/css/layui.css" media="all">
+    <link rel="stylesheet" href="../../../layuiadmin/style/table.css" media="all">
+    <style type="text/css">
+    .laytable-cell-1-timeRange {
+        overflow: visible;
+    }
+    .operate-form .layui-form-label{
+        width: auto;
+    }
+    </style>
+</head>
+<body>
+<div class="layui-row table-box">
+    <div class="table-title layui-col-md12">指令管理
+        <ul class="table-title-tool">
+            <li title="添加" data-name="other">
+                <a href="create.html" lay-href="create.html">
+                    <img src="../../../images/tianjia.png" alt="">
+                    <span style="display: none">添加指令</span>
+                </a>
+            </li>
+        </ul>
+    </div>
+
+    <!--表格-->
+    <div id="areaTable" class="table-data layui-col-md12" lay-filter="table-tool"></div>
+
+    <!--<a class="layui-btn layui-btn-xs layui-btn-normal" lay-event="update">修改</a>-->
+</div>
+</body>
+<script type="text/html" id="tableTool">
+
+    <a class="layui-btn layui-btn-primary layui-btn-xs" lay-event="detail" href="result.html?msgId={{ d.id }}" >查看推送结果</a>
+
+</script>
+<script type="text/javascript" src="../../../layuiadmin/layui/layui.js"></script>
+<script type="text/javascript" src="../../../layuiadmin/js/global.js"></script>
+
+<script type="text/javascript">
+
+layui.config({
+        base: '../../../layuiadmin/' //静态资源所在路径
+    }).extend({
+        index: 'lib/index' //主入口模块
+    }).use([ 'jquery', 'element', 'table','form', 'tree'], function () {
+        $ = layui.$;
+        var element = layui.element;
+        var table = layui.table;
+        var form = layui.form;
+        topcateid = 0;
+
+        username = getCookie('username');
+        accessToken = getCookie('accessToken');
+        var page = 1; // 第一页
+        var pageSize = 10; // 每页的行数
+        var host = parent.layui.setter.host;
+
+        var tableLists = table.render({
+            url: host+'/api/v1/user/instruction/backCreatorLists'
+            ,elem: '#areaTable'
+            ,where: {
+                access_token: accessToken,
+                user_login: username,
+                time: new Date()
+            }
+            ,cols: [[
+                {field:'id',title:'序号', width:60, align:'center'}
+                ,{field:'content', title: '内容', align:'center'}
+                ,{field:'createTimeStr', title: '发送时间', align:'center'}
+                ,{field:'reveiverName', title: '接收人', align:'center'}
+                ,{title: '操作', toolbar :'#tableTool', align:'left'}
+            ]]
+            ,skin: 'line' //行边框风格
+            ,response: {
+              statusName: 'code' //数据状态的字段名称，默认：code
+              ,statusCode: '001' //成功的状态码，默认：0
+              ,msgName: 'message' //状态信息的字段名称，默认：msg
+              ,countName: 'totalCount' //数据总数的字段名称，默认：count
+              ,dataName: 'data' //数据列表的字段名称，默认：data
+            }
+            ,done : function (res) {
+                identityFailure(res.code);
+            }   
+            ,request: {
+                pageName: 'page' //页码的参数名称，默认：page
+                ,limitName: 'size' //每页数据量的参数名，默认：limit
+            }
+            , page: {
+                layout: ['prev', 'page', 'next', 'count', 'skip','limit'] //自定义分页布局
+                , groups: 5 //只显示 5 个连续页码
+                , first: "首页" //显示首页
+                , last: "尾页" //显示尾页
+                , limit: pageSize
+            }
+        });
+
+        //监听工具条
+        table.on('tool(table-tool)', function(obj){
+            var data = obj.data;
+            if(obj.event === 'detail'){ // 查看
+                addCookie("msgId", data.id, 100000);
+                return false;
+            }
+        });
+
+    });
+</script>

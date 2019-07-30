@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>推送结果详情</title>
+    <link rel="stylesheet" href="../../../layuiadmin/layui/css/layui.css" media="all">
+    <link rel="stylesheet" href="../../../layuiadmin/style/table.css" media="all">
+    <link rel="stylesheet" type="text/css" href="../../../layuiadmin/js/jsTools/zTree/zTreeStyle.css">
+    <style type="text/css">
+    body {
+        background-color: #FFF;
+    }
+    .laytable-cell-1-timeRange {
+        overflow: visible;
+    }
+    .operate-form .layui-form-label{
+        width: auto;
+    }
+    .ztree {
+        width: 70%;
+        margin: 0 auto;
+    } 
+
+    .unread {
+        color: #ff355e;
+    }
+    .read {
+        color: #fcbe54;
+    }
+
+    .pushed-ok {
+        color: #35ff35;
+    }
+    .pushed-error {
+        color: #ff355e;
+    }
+    .result-box {
+        position: relative;
+        border: 1px solid #f1f1f1;
+        padding: 10px 40px 10px 10px;
+    }
+    .result-status-box {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+    }
+    .message-push-result-box {
+        width: 60%;
+        margin: 0 auto;
+        min-height: 100px;
+    }
+    .receiver-name {
+        font-size: 16px;
+    }
+    .return-btn {
+        margin-left: 20px;
+    }
+    /*.message-title {
+        font-size: 20px;           
+    }*/
+    </style>
+</head>
+<body>
+<form class="layui-form" action="">
+    <div class="layui-form-item">
+        <label class="layui-form-label">消息内容</label>
+        <div class="layui-input-block" style="">
+            <textarea id="content" name="content" placeholder="请输入消息内容" class="layui-textarea"></textarea>
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">发送人</label>
+        <div class="layui-input-block" style="">
+            <input type="text" id="name" name="name" autocomplete="off" class="layui-input">
+        </div>
+    </div>
+    
+    <div class="layui-form-item">
+        <label class="layui-form-label message-title">执行情况</label>
+    </div>    
+
+    <div id="messagePushResultBox" class="message-push-result-box"></div>
+    <div class="layui-form-item">
+        <label class="layui-form-label"><a class="layui-btn layui-btn-warm" href="index.html">返回</a></label>
+    </div>
+
+</form>
+</body>
+<script type="text/javascript" src="../../../layuiadmin/layui/layui.js"></script>
+<script type="text/javascript" src="../../../layuiadmin/js/global.js"></script>
+<script type="text/javascript" src="../../../layuiadmin/jQuery/jquery-1.9.1/jquery.min.js"></script>
+<script type="text/javascript" src="../../../layuiadmin/js/jsTools/zTree/jquery.ztree.all.min.js"></script>
+
+<script type="text/javascript">
+
+layui.config({
+        base: '../../../layuiadmin/' //静态资源所在路径
+    }).extend({
+        index: 'lib/index' //主入口模块
+    }).use([ 'jquery', 'element', 'table','form'], function () {
+        $ = layui.$;
+        var element = layui.element;
+        var table = layui.table;
+        var form = layui.form;
+        // topcateid = 0;
+
+        username = getCookie('username');
+        accessToken = getCookie('accessToken');
+        var page = 1; // 第一页
+        var pageSize = 10; // 每页的行数
+        var host = parent.layui.setter.host;
+        var ok = true;
+
+        var curId = getCookie("msgId");
+
+            /*获取此时能进行的用户选择*/
+            $.ajax({
+                url: "/api/v1/message/result",
+                type: "GET",
+                dataType: "JSON",
+                data: {
+                    user_login: username,
+                    access_token: accessToken,
+                    id: curId,
+                    time: new Date()
+                },
+                cache: false,
+                async: false,
+                success: function(response) {
+
+                    identityFailure(response['status']['code']);
+
+                    if( !response['status']['success'] ) {
+                        // ok = false;
+                        layer.msg(response['status']['message'], {time: 2000});
+                        return false;
+                    }
+
+                    var data = response['data'];
+                    var nodes = new Array();
+                    var node = new Object();
+                    var children = new Object();
+
+                    if( data==null || data.length==0) {
+                        // ok = false;
+                        layer.msg("查询不到数据", {time: 2000});
+                        return false;
+                    }
+
+                    $("#content").val( data[0]['content'] );
+                    $("#name").val( data[0]['authorName'] );
+
+                    var totalStr = '';
+                    var innerHeader = '';
+                    var innerContent = '';
+                    var innerFooter = '';
+                    var curDataLength = data.length;
+                    var resultStatusClass = '';
+                    var resultStatusStr = '';
+                    // var isCheckedStr = '';
+                    for(var i=0; i<data.length; i++) {
+
+                        innerHeader = '';
+                        innerContent = '';
+                        innerFooter = '';
+                        // isCheckedStr = curData[i]['checked']? " checked ":"";
+
+                        resultStatusClass = 'pushed-error';
+                        resultStatusStr = '推送失败';
+                        if( data[i]['pushedResult']==1 ) {
+                            resultStatusClass = 'pushed-ok';
+                            resultStatusStr = '推送成功';
+                        }
+
+                        innerContent += '<div class="layui-col-md4">';
+                        innerContent +=     '<div class="result-box">';
+                        innerContent +=         '<span class="receiver-name">' + data[i]['receiverName'] + "</span>";
+                        innerContent +=         '<span class="result-status-box ' + resultStatusClass + '">';
+                        innerContent +=              resultStatusStr;
+                        innerContent +=         '</span>';
+                        innerContent +=     '</div>';
+                        innerContent += '</div>';
+
+                        if( i==0 || i%3==0 ) {
+                            innerHeader = '<div class="layui-row layui-col-space10">';
+                        }
+
+                        if( (i+1)%4==0 || i+1==curDataLength ) {
+                            innerFooter = '</div>';
+                        }
+
+                        totalStr += innerHeader + innerContent + innerFooter;
+
+                    }
+
+                    $("#messagePushResultBox").html( totalStr );
+                    
+                    form.render();
+                }
+
+            });
+
+    });
+</script>

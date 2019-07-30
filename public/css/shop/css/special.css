@@ -1,0 +1,136 @@
+html,body,span,div,p{
+		padding: 0px;
+		margin: 0px;
+	}
+	html, body {
+		width: 100%;
+		height: 100%;
+	}
+	html {
+		overflow-x: hidden;
+	}
+	body {
+		background-color: #FFF;/**/
+	}
+	.nosee {
+		display: none;
+	}
+	a {
+		text-decoration: none;
+	}
+	.header-img {
+		width: 100%;
+		height: 5rem;
+		position: relative;	
+	}
+	.header-img img {
+		display: block;
+		width: 100%;
+		height: 100%;
+	}
+	.special-tag {
+		background-color: #f7d343;
+		color:#FFF;
+		font-size: 0.2rem;
+		padding: 0.2rem 0.28rem;
+		position: fixed;
+		top: 3.1rem;
+		left: 0.5rem;
+		border-radius: 100%;
+	}
+	.special-title-1 {
+		color: #1f0f0f;
+		position: fixed;
+		top: 4.3rem;
+		left: 0.8rem;
+		font-size:  0.45rem;
+		word-wrap: break-word;
+		letter-spacing: -0.1rem;
+		width: 0.4rem;
+		line-height: 1.1;
+	}
+	.special-title-2 {
+		-webkit-transform: rotate(90deg); /* for Safari, Chrome */ 
+		-moz-transform: rotate(90deg);/* for Firefox */ 
+		-o-transform: rotate(90deg);/* for Opera */ 
+		font-size: 0.2rem;
+		width: 0.2rem;
+		color: #3e3c3c;
+		position: fixed;
+		top: 6.6rem;
+		left: 0.45rem;
+	}
+	.descp-box {
+		width: 45%;
+    margin-left: 45%;
+    font-size: 0.2rem;
+    color: #6f6f6f;
+    border-bottom: 0.03rem dashed #dbdbdb;
+    padding-bottom: 0.5rem;
+    line-height: 1.2;
+    margin-bottom: 0.7rem;
+	padding-left: 0.3rem;
+	padding-right: 0.3rem;
+	}
+	.rest-div-1 {
+		width: 100%;
+		height: 1rem;
+	}
+	.rest-div-2 {
+		width: 100%;
+		height: 0.4rem;
+	}
+	
+	/*产品*/
+	.each-pro-box {
+		width: 90%;
+		height: 2.5rem;
+		margin-left: 10%;
+		margin-bottom: 0.4rem;
+	}
+	.pro-img {
+		width: 3rem;
+		height: 2.4rem;
+		float: left;
+		margin-right: 0.2rem;
+	}
+	.pro-title {
+		font-size: 0.22rem;
+		color: #333333;
+		padding-right: 0.4rem;
+		height: 0.6rem;
+		overflow: hidden;
+	}
+	.pro-sub-title {
+		font-size: 0.18rem;
+		color: #333333;
+		padding-right: 0.3rem;
+		margin-top: 0.1rem;
+		margin-bottom: 0.1rem;
+		height: 1.2rem;
+    	overflow: hidden;
+	}
+	.see-more {
+		font-size: 0.24rem;
+		color: #FFF;
+		background-color: #f7d343;
+		padding: 0.05rem 0.25rem;
+		border-radius: 0.2rem;
+	}
+	
+	/*提醒*/
+	.remind-box {
+		width: 100%;
+		height: 1.1rem;
+		background-color: #f5f5f5;	
+	}
+	.has-no-data-box {
+		width: 85%;
+		height: 0.75rem;
+		margin-left: 10%;
+		border-top: 0.03rem dashed #dbdbdb;
+		line-height: 0.75rem;
+		font-size: 0.18rem;
+		text-align: center;
+		color: #aca8a8;
+	}

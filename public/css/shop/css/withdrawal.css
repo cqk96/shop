@@ -1,0 +1,128 @@
+html,body,span,div,p{
+		padding: 0px;
+		margin: 0px;
+	}
+	html, body {
+		width: 100%;
+		height: 100%;
+		overflow: hidden;
+	}
+	body {
+		background-color: #f5f5f5;
+	}
+	.nosee {
+		display: none;
+	}
+	a {
+		text-decoration: none;
+	}
+.edit-box {
+		width: 100%;
+		background-color: #FFF;
+	}
+	input {
+		border: none;
+		color: #bab8b8;
+		width: 3rem;
+	}
+	/*每个修改点*/
+	.each-edit-box {
+		width: 90%;
+		margin: 0 auto;
+		height: 1.1rem;
+		border-bottom: 0.03rem dashed #dbdbdb;
+		position: relative;
+	}
+	.each-edit-title-box {
+		width: 100%;
+		height: 100%;
+		font-size: 0.32rem;
+		line-height: 1.1rem;
+		font-weight: 900;
+	}
+	.phone {
+		position: absolute;
+		font-size: 0.3rem;
+		left: 1.1rem;
+		top: 0.35rem;
+	}
+	.input-value {
+		position: absolute;
+		left: 1.6rem;
+		top: 0.37rem;
+	}
+	.captcha-btn {
+		display: inline-block;
+    height: 0.45rem;
+    width: 1.4rem;
+    line-height: 0.45rem;
+    text-align: center;
+    border: 0.03rem solid #f9626d;
+    color: #f9626d;
+    font-size: 0.25rem;
+    position: absolute;
+    top: 0.33rem;
+    right: 0.15rem;
+    border-radius: 0.08rem;
+	}
+	.rest-div {
+		width: 100%;
+		height: 0.7rem;
+	}
+	.certain-btn {
+		width: 90%;
+		height: 0.8rem;
+		margin: 0.2rem auto 0px auto;
+		color: #FFF;
+		border-radius: 0.08rem;
+		line-height: 0.8rem;
+		text-align: center;
+		background-color: #f7d343;
+		font-size: 0.3rem;
+	}
+	input {
+		line-height: 1.1;
+		font-size: 0.26rem;
+	}
+	.drawal-type-box {
+		font-size: 0.26rem;
+		font-weight: normal;
+		/*margin-left: 0.2rem;*/
+		position: absolute;
+		top: 0px;
+		left: 2rem;
+		display: inline-block;
+	}
+	.drawal-type-box label {
+		margin-right: 0.2rem;
+	}
+	.drawal-type-box span {
+		margin-left: 0.1rem;
+	}
+	ins {
+		width: 0.3rem !important;
+		height: 0.3rem !important;
+	}
+	.drawal-input-box {
+		border: 0.03rem solid #d9d9d9;
+		height: 0.5rem;
+		width: 4.3rem;
+		padding-left: 0.4rem;
+		border-radius: 0.1rem;
+		/* margin-left: 1.5rem; */
+		position: absolute;
+		top: 0.9rem;
+		left: 0px;
+	}
+	.submitBtn {
+		width: 90%;
+	    margin: 0.2rem auto 0px auto;
+	    height: 0.8rem;
+	    position: relative;
+	    line-height: 0.8rem;
+	    font-size: 0.3rem;
+	    color: #FFF;
+	    background-color: #f7d343;
+	    text-align: center;
+	    border-radius: 0.1rem;
+	}

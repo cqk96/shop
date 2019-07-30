@@ -1,0 +1,53 @@
+table,tr,td,tbody,tfoot,thead {
+	padding: 0px;
+	margin: 0px;
+}
+body {
+	background-color: #F7F7F7;
+}
+#indexTable {
+	width: 99%;
+	background-color: #F9B774;
+	box-shadow: 0 0 5px gray;
+	margin: 10px auto;
+	font-family: "windows vista","方正舒体","Comic Sans MS",serif;
+}
+#indexTable caption {
+	background-color: #FFF !important;
+}
+#indexTable tbody {
+	text-align: center;
+} 
+#indexTable tbody tr:hover{
+	background-color: orange !important;
+	color: #FFF;
+	cursor: pointer;
+}
+#indexTable tbody tr:nth-child(odd) {
+	background-color: #FFF3F5;
+}
+#indexTable tbody tr:nth-child(odd) td {
+	/*border-right: 1px solid #FFF;*/
+}
+
+#indexTable tbody tr:nth-child(even) {
+	background-color: #FFF;
+}
+#indexTable tbody tr:nth-child(even) td{
+	/*border-right: 1px solid #FFF3F5;*/
+}
+#indexTable thead th {
+	text-align: center;
+	color: #FFF;
+}
+#indexTable .btn {
+	margin-top: 5px;
+    margin-bottom: 5px;
+}
+#indexTable tfoot {
+	background-color: #FFF;
+	/*border-top: 1px solid #e0e0e0;*/
+}
+#indexTable tfoot tr td{
+	/*border-right: 1px solid none !important;*/
+}

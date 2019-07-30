@@ -1,0 +1,266 @@
+html,body {
+			padding: 0px;
+			margin: 0px;
+		}
+		html, body {
+			width: 100%;
+			height: 100%;
+		}
+		html {
+			overflow-x: hidden;
+		}
+		body {
+			background-color: #f9f9f9;/**/
+		}
+
+		/*背景块*/
+		.bg-block-box {
+			width: 100%;
+			height: 4rem;
+			position: relative;
+			background-color: #FFF;/*#*/
+			border: 0.01rem solid transparent;
+			background-image: url(/images/sucai/mine-bg.jpg);
+			background-size: 100% 100%;/**/
+			/*background-repeat: no-repeat;*/
+		}
+		.avatar-img {
+			width: 1.39rem;
+			height: 1.39rem;
+			display: block;
+			margin: 0rem auto 0 auto;
+			/*padding-top: 0.8rem;*/
+			border-radius: 100%;
+		}
+		/*电话*/
+		.tel {
+			width: 100%;
+			text-align: center;
+			margin-top: 0.15rem;
+			font-size: 0.3rem;
+			color: #808080;
+		}
+		/*账户管理与收获地址*/
+		.account-with-address {
+			width: 100%;
+			text-align: center;
+			margin-top: 0.1rem;
+			font-size: 0.3rem;
+			color: #808080;
+			height: 0.6rem;
+			position: relative;
+		}
+		.account-with-address-concret {
+			width: 100%;
+			height: 100%;
+			line-height: 0.6rem;
+		}
+		.show-awa {
+			font-size: 0.46rem;
+		    position: absolute;
+		    top: 0rem;
+		    right: 26%;
+		    display: inherit;
+		    padding: 0px;
+		}
+
+		/*第一块*/
+		.earn-order-express-box,.collect-coupons-kf-box{
+			width: 100%;
+			background-color: #FFF;
+			border: 0.01rem solid #FFF;
+		}
+		.each-item-box {
+			width: 90%;
+			height: 1.3rem;
+			margin: 0 auto;
+			position: relative;
+			background-color: #FFF;
+			border-bottom: 0.03rem dashed #d9d9d9;
+			border-top: 0.01rem solid #FFF;
+		}
+		.item-content-box {
+			width: 100%;
+			height: 0.6rem;
+			/*margin-top: 0.35rem;*/
+			position: relative;
+		}
+		.item-tag-bg-color-1 {
+			background-color: #f7b83f;
+		}
+		.item-tag-bg-color-2 {
+			background-color: #f28c27;
+		}
+		.item-tag-1{
+			display: inline-block;
+			float: left;
+			width: 0.62rem;
+			height: 0.62rem;
+			border-radius: 100%;
+			/*padding: 0.06rem 0.04rem;*/
+			margin-right: 0.2rem;
+		}
+		.item-tag-2{
+			display: inline-block;
+			float: left;
+			width: 0.42rem;
+			height: 0.43rem;
+			border-radius: 100%;
+			padding: 0.06rem 0.04rem;
+			margin-right: 0.2rem;
+		}
+		.item-title {
+			font-size: 0.3rem;
+			width: 100%;
+			height: 100%;
+			line-height: 0.6rem;
+			color: #333333;
+			font-weight: 900;
+		}
+			/*这招三角形*/
+.transparent-right-trangel {
+	width: 0px;
+	height: 0px;
+	border-top: 0.15rem solid transparent;
+	border-left: 0.15rem solid #FFF;
+	border-right: 0.15rem solid transparent;
+	border-bottom: 0.15rem solid transparent;
+	position: absolute;
+	top: 0.1rem;
+	right: 0.05rem;
+	z-index: 3;
+}
+/*下三角*/
+.right-trangel {
+	width: 0px;
+	height: 0px;
+	border-top: 0.15rem solid transparent;
+	border-left: 0.15rem solid #969696;
+	border-right: 0.15rem solid transparent;
+	border-bottom: 0.15rem solid transparent;
+	position: absolute;
+	top: 0.1rem;
+	right: 0px;
+}
+
+/*物流*/
+.express-box {
+	width: 90%;
+	margin: 0 auto;
+	height: 1.5rem;
+	background-color: #FFF;
+}
+.each-express-item {
+	width: 25%;
+	float: left;
+	position: relative;
+}
+/*标识*/
+.express-tag {
+	display: block;
+	margin: 0.3rem auto 0px auto;
+}
+.express-tag-1 {
+	width: 0.48rem;
+	height: 0.42rem;
+}
+.express-tag-2 {
+	width: 0.48rem;
+	height: 0.41rem;
+}
+.express-tag-3 {
+	width: 0.48rem;
+	height: 0.45rem;
+}
+.express-tag-4 {
+	width: 0.43rem;
+	height: 0.42rem;
+}
+.express-title {
+	font-size: 0.3rem;
+	color: #d5d5d5;
+	margin-top: 0.15rem;
+	text-align: center;
+}
+.rest-count-box {
+	background-color: #d31826;
+	padding: 0.01rem 0.1rem;
+	font-size: 0.24rem;
+	color: #FFF;
+	border-radius: 100%;
+	position: absolute;
+	top: 0.2rem;
+	right: 0.5rem;
+}
+.collect-coupons-kf-box {
+	margin-top: 0.2rem;
+}
+
+/*登出*/
+.logout-btn {
+	width: 80%;
+	height: 0.8rem;
+	margin: 0.5rem auto 0px auto;
+	background-color: #f7d343;
+	font-size: 0.3rem;
+	color: #FFF;
+	text-align: center;
+	border-radius: 0.08rem;
+	line-height: 0.8rem;
+}
+/*下方缺省*/
+.rest-div {
+	width: 100%;
+	height: 0.5rem;
+}
+.bottom-bar-default {
+			width: 100%;
+			height: 1.25rem;
+		}
+		.bottom-bar-box {
+			width: 100%;
+			height: 1.1rem;
+			position: fixed;
+			bottom: 0px;
+			background-color: #FFF;
+			z-index: 99;
+		}
+		.each-bar-box {
+			width: 33.3333%;
+			height: 100%;
+			float: left;
+			position: relative;
+		}
+
+		.each-bar-img {
+			width: 20%;
+			height: 0.5rem;
+			position: absolute;
+			left: 40%;
+			top: 0.2rem;
+		}
+		.bar-text-box {
+			position: absolute;
+			bottom: 0px;
+			text-align: center;
+			width: 100%;
+			color: #737373;
+			font-weight: 900;
+			font-size: 0.3rem;
+		}
+		.bar-text-on {
+			color: #eec57d !important;
+		}
+		.item-concret-box {position: absolute; top: 0.04rem; right: 0.6rem; font-size: 0.3rem; color: #969696; }
+a {
+	text-decoration: none;
+	color: #808080;
+}
+.rest-div-80 {
+	width: 100%;
+	height: 0.8rem;
+}
+.rest-div-35 {
+	width: 100%;
+	height: 0.35rem;
+}

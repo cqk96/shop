@@ -1,0 +1,246 @@
+
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>用户管理</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=0">
+    <link rel="stylesheet" href="../../layuiadmin/layui/css/layui.css" media="all">
+    <link rel="stylesheet" href="../../layuiadmin/style/table.css" media="all">
+
+    <style>
+        .layui-table-cell{
+            height:40px;
+            line-height: 40px;
+        }
+        .avatar-box,.avatar-box img  {
+            width: 38px;
+            height: 38px;
+            -webkit-border-radius: 50%;
+            -moz-border-radius: 50%;
+            border-radius: 50%;
+        }
+
+    </style>
+</head>
+<body>
+<div class="table-box layui-row">
+    <div class="table-title layui-col-md12">用户管理
+        <ul class="table-title-tool">
+            <li title="添加新用户" data-name="other">
+                <a href="other/addStaff.html" id="addStaffId">
+                    <img src="../../images/tianjia.png" alt="">
+                    <span style="display: none">添加部门</span>
+                </a>
+            </li>
+
+        </ul>
+    </div>
+    <!--搜索框-->
+    <div class="search-box layui-col-md12">
+        <div class="layui-col-md3 search-input-box">
+            <input type="text" class="layui-input search-input" name="keyword" id="searchInput" autocomplete="off" placeholder="请输入用户姓名">
+        </div>
+        <div class="layui-col-md3 search-input-box">
+            <input type="text" class="layui-input search-input" name="keyword" id="searchInput2" autocomplete="off" placeholder="请输入部门名称">
+        </div>
+        <button class="layui-btn layui-btn-normal search-btn" data-type="reload">
+            <i class="layui-icon layui-icon-search" style="font-size: 16px;"></i>
+            搜索
+        </button>
+    </div>
+    <div style="clear: both;"></div>
+    <!--表格-->
+    <div class="table-data layui-col-md12" id="staffTable" lay-filter="table-tool" >
+
+    </div>
+
+</div>
+
+<!--操作-->
+<script type="text/html" id="tableTool">
+    <a class="layui-btn layui-btn-primary layui-btn-xs" lay-event="detail" href="other/addStaff.html">查看编辑</a>
+    <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>
+</script>
+
+
+<!--头像-->
+<script type="text/html" id="avatar">
+<div class="avatar-box">
+    <img src="{{parent.layui.setter.host+ d.avatar}}" alt="">
+</div>
+</script>
+<script src="../../layuiadmin/layui/layui.js"></script>
+<script src="../../layuiadmin/jQuery/jquery-1.9.1/jquery.min.js"></script>
+<script src="../../layuiadmin/js/global.js"></script>
+<script>
+
+
+    layui.config({
+        base: '../../layuiadmin/' //静态资源所在路径
+    }).extend({
+        index: 'lib/index' //主入口模块
+    }).use(['index', 'table', 'upload'],function(){
+
+        $ = layui.$;
+        var element = layui.element;
+        var table = layui.table;
+        var form = layui.form;
+
+        username = getCookie('username');
+        accessToken = getCookie('accessToken');
+        tokenInvalid(accessToken,username);
+        var page = 1; // 第一页
+        var pageSize = 10; // 每页的行数
+
+        var $thisId ;
+
+
+        $("#addStaffId").click(function () {
+             $thisId = $(this).attr('id');
+            addCookie('$thisId', $thisId, 1200);
+        });
+
+        // 获取人员显示列表
+        table.render({
+             url: parent.layui.setter.host + '/api/v1/user/lists'
+            ,elem: '#staffTable'
+            , type: 'get'
+            , cols: [[
+                {field: 'avatar', title: '头像',align:'center',templet:'#avatar',width:100}
+                , {field: 'name', title: '姓名', align: 'center'}
+                , {field: 'departmentName', title: '所属部门', align: 'center'}
+                , {field: 'phone', title: '联系电话', align: 'center'}
+                , {field: 'managerName', title: '主管领导', align: 'center'}
+                , {title: '操作', toolbar: '#tableTool', align: 'center'}
+            ]]
+            , where: {
+                access_token: accessToken,
+                user_login: username,
+            }
+            , skin: 'nob' //行边框风格
+            , request: {
+                pageName: 'page' //页码的参数名称，默认：page
+                , limitName: 'size' //每页数据量的参数名，默认：limit
+            }
+            ,response: {
+                statusName: 'code' //数据状态的字段名称，默认：code
+                ,statusCode: '001' //成功的状态码，默认：0
+                ,msgName: 'message' //状态信息的字段名称，默认：msg
+                ,countName: 'totalCount' //数据总数的字段名称，默认：count
+                ,dataName: 'data' //数据列表的字段名称，默认：data
+            }
+            , loading : true
+            , page: {
+                layout: ['prev', 'page', 'next', 'count', 'skip', 'limit'] //自定义分页布局
+                , groups: 5 //只显示 5 个连续页码
+                , first: "首页" //显示首页
+                , last: "尾页" //显示尾页
+                , limit: pageSize
+            }
+            ,done:function(res){
+
+                if(res.code=='014' || res.code == '017'){
+                    parent.window.location.href="/farmMS/src/views/user/login.html";
+                }
+            }
+
+        });
+
+
+        //监听工具条
+        table.on('tool(table-tool)', function(obj){
+            var data = obj.data;
+            if(obj.event === 'detail'){ // 查看
+                $thisId = data.id;
+                addCookie('$thisId', $thisId, 1200); // 将该条的id存入cookie
+
+            } else if(obj.event === 'del'){ // 删除
+                layer.confirm('真的删除行么', function(index){
+                    layui.$.ajax({
+                        url : parent.layui.setter.host + '/api/v1/user/delete?access_token='+accessToken+'&user_login='+username + '&id=' +data.id,
+                        type : 'post',
+                        dataType: 'json',
+                        success : function (res) {
+                            if (res.status.code == '003'){
+                                layer.msg(res.status.message);
+                                return;
+                            }
+                            layer.msg('删除成功');
+                            obj.del();
+                        },
+                        error : function (res) {
+                            layer.msg('删除失败');
+                        }
+                    });
+
+                    layer.close(index);
+                });
+                form.render();
+            }
+        });
+        table.on('tool(table-tool)', function(obj){
+            var data = obj.data;
+            if(obj.event === 'detail'){ // 查看
+                $thisId = data.id;
+                addCookie('$thisId', $thisId, 1200); // 将该条的id存入cookie
+
+            } else if(obj.event === 'del'){ // 删除
+                layer.confirm('真的删除行么', function(index){
+                    layui.$.ajax({
+                        url : parent.layui.setter.host + '/api/v1/user/delete?access_token='+accessToken+'&user_login='+username + '&id=' +data.id,
+                        type : 'post',
+                        dataType: 'json',
+                        success : function (res) {
+                            if (res.status.code == '003'){
+                                layer.msg(res.status.message);
+                                return;
+                            }
+                            layer.msg('删除成功');
+                            obj.del();
+                        },
+                        error : function (res) {
+                            layer.msg('删除失败');
+                        }
+                    });
+
+                    layer.close(index);
+                });
+                form.render();
+            }
+        });
+        //搜索
+        var active = {
+            reload: function () {
+                var userName = $.trim($('#searchInput').val());//获取到搜索框的id
+                var departmentName = $.trim($('#searchInput2').val());//获取到搜索框的id
+
+                table.reload('staffTable', { // table容器的id
+                    where: {
+                        userName: userName, // keyword往后台传的值
+                        departmentName: departmentName // keyword往后台传的值
+                    }
+                    , page: {
+                        curr: 1 //从第一页开始
+                    }
+                });
+
+            }
+        };
+
+
+        // 搜索按钮绑定click事件
+        $('.search-btn').on('click', function(){
+            var type = $(this).data('type');
+            active[type] ? active[type].call(this) : '';
+            // console.log(type);
+        });
+    });
+
+</script>
+
+</body>
+</html>

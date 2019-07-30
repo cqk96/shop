@@ -1,0 +1,34 @@
+{
+    "require": {
+        "illuminate/database": "v5.1.8",
+        "noahbuscher/macaw": "dev-master",
+	"robmorgan/phinx": "v0.5.1",
+        "phpoffice/phpexcel": "1.8.1",
+        "phpoffice/phpword": "v0.14.0",
+        "nette/mail": "v2.3.4",
+        "predis/predis": "*",
+        "jpush/jpush": "v3.5.*",
+        "tufanbarisyildirim/php-apk-parser":"dev-master",
+        "aliyuncs/oss-sdk-php": "^2.3",
+        "guzzlehttp/guzzle": "~6.0"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "4.8.6"
+    },
+    "autoload":{
+        "classmap": [
+            "app/controllers/api",
+            "app/controllers/back",
+            "app/controllers/front",
+            "app/controllers/mobile",
+            "app/models",
+            "app/modules"
+        ]
+    },
+    "repositories": {  
+        "packagist": {  
+            "type": "composer",  
+            "url": "https://packagist.phpcomposer.com"  
+        }  
+    }  
+}

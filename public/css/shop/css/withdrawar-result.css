@@ -1,0 +1,66 @@
+html,body,span,div,p{
+		padding: 0px;
+		margin: 0px;
+	}
+	html, body {
+		width: 100%;
+		height: 100%;
+		overflow: hidden;
+	}
+	body {
+		background-color: #f5f5f5;
+	}
+	.nosee {
+		display: none;
+	}
+	a {
+		text-decoration: none;
+	}
+
+	/*缺省*/
+	.rest-div-10 {
+		width: 100%;
+		height: 0.1rem;
+	}
+	.rest-div-40 {
+		width: 100%;
+		height: 0.4rem;
+	}
+	.rest-div-50 {
+		width: 100%;
+		height: 0.5rem;
+	}
+	.rest-div-55 {
+		width: 100%;
+		height: 0.55rem;
+	}
+
+	.result-box {
+		width: 100%;
+	    height: 4.8rem;
+	    background-color: #FFF;
+	    box-shadow: 0px 0.05rem 0.1rem #dedede;
+	}
+	.result-tag {
+		width: 0.81rem;
+		height: 0.81rem;
+		margin: 0 auto 0.55rem auto;
+		display: block;
+	}
+	.result-title {
+		margin-bottom: 0.2rem;
+		font-size: 0.28rem;
+		color: #848483;
+		text-align: center;
+	}
+	.returnBtn {
+		width: 6.8rem;
+		margin: 0.75rem auto 0px auto;
+		height: 0.8rem;
+		border-radius: 0.1rem;
+		background-color: #f7d343;
+		color: #FFF;
+		line-height: 0.8rem;
+		text-align: center;
+		font-size: 0.3rem;
+	}

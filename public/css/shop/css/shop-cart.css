@@ -1,0 +1,653 @@
+html,body,span,div,p{
+			padding: 0px;
+			margin: 0px;
+		}
+		body {
+			background: #f2f2f2;
+		}
+		html,body {
+			width: 100%;
+			height: 100%;
+		}
+
+		/*编辑*/
+		.edit-bar-box {
+			width: 100%;
+			height: 0.8rem;
+			background-color: #FFF;
+			font-size: 0.3rem;
+			text-align: right;
+			line-height: 0.8rem;
+			color: #595959;
+			/*font-weight: 900;*/
+		}
+		.edit-bar-box span {
+			margin-right: 0.25rem;
+		}
+
+		/*商品*/
+		.each-product {
+			width: 100%;
+			height: 2.3rem;
+			background-color: #FFF;
+			margin-top: 0.15rem;
+			font-size: 0.3rem;
+		}
+		.check-box {
+			width: 0.9rem;
+			height: 100%;
+			float: left;
+			position: relative;
+		}
+		.img-box {
+			width: 1.7rem;
+			height: 100%;
+			float: left;
+		}
+		.img-box img{
+			display: block;
+			width: 100%;
+			height: 2rem;
+			margin: 0.2rem auto 0px auto;
+		}
+		.title-box {
+			width: 4.85rem;
+			height: 100%;
+			float: right;
+			position: relative;
+		}
+		.checkPosition {
+			position: absolute;
+			top: 0.8rem;
+			left: 0.3rem;
+		}
+		.certain-checkbox-box-label {
+			border-radius: 100% !important;
+		}
+
+		.custom-checkbox input[type=checkbox]:checked+label {
+			border-color: #b3e43c;
+			background-color: #b3e43c;
+			border-radius: 100%;
+		}
+
+		.custom-checkbox label {
+			width: 0.4rem;
+			height: 0.4rem;
+		}
+		.custom-checkbox label:after {
+			border-color: #fff;
+			top: 0.04rem;
+			left: 0.03rem;
+		}
+
+		.title-content {
+			font-size: 0.28rem;
+			font-weight: 900;
+			margin-top:  0.2rem;
+			color: #777777;
+			padding-left: 0.1rem;
+			padding-right: 0.15rem;
+		}
+
+		/*数量与价格*/
+		.count-with-price-box {
+			width: 100%;
+			position: absolute;
+			top: 1.6rem;
+			left: 0px;
+		}
+
+		/*数量*/
+		.count-box {
+			width: 2.5rem;
+			height: 0.5rem;
+			margin-left: 0.1rem;
+		}
+		.decrease-box {
+			width: 19%;
+			height: 100%;
+			float: left;
+			text-align: center;
+			/*border-right: 0.01rem solid #bebebe;*/
+			line-height: 0.5rem;
+			background-color: #e6e5e3 !important;
+    		color: #cccbca;
+		}
+		.disable-decrease {
+			background-color: #e6e5e3 !important;
+			color: #cccbca;
+		}
+		.number-box {
+			width: 60%;
+			height: 100%;
+			float: left;
+		}
+		.number-box input{
+			display: block;
+			width: 100%;
+			height: 100%;
+			border: none;
+			border-radius: 0px;
+			text-align: center;
+			color: #333333;
+			font-size: 0.33rem;
+		}
+		.increase-box {
+			width: 19%;
+			height: 100%;
+			float: right;
+			text-align: center;
+			color: #333333;
+			/*border-left: 0.01rem solid #bebebe;*/
+			line-height: 0.5rem;
+			background-color: #e6e5e3 !important;
+			
+		}
+		.price-box {
+			position: absolute;
+			right: 0.15rem;
+			top: 1.4rem;
+			color: #d31826;
+			font-size: 0.40rem;
+			/*font-weight: 900;*/
+		}
+
+		/*波浪线*/
+		.wave-box {
+			width: 100%;
+			height: 0.11rem;
+			background: url(/images/sucai/wave6.png);
+			background-size: 0.35rem 0.1rem;
+			position: absolute;
+			z-index: 33;
+			top: 0px;
+			left: 0px;
+		}
+		.wave-bg {
+			position: relative;
+			width: 100%;
+			height: 0.11rem;
+			background-color: #FFF;
+			z-index: 2;
+		}
+
+		/*底部bar*/
+		.bottom-bar-box{
+			width: 100%;
+			height: 0.9rem;
+			position: fixed;
+			bottom: 0px;
+			background-color: #FFF;
+			z-index: 99;
+		}
+		.each-bar-box {
+			width: 33.3333%;
+			height: 100%;
+			float: left;
+			position: relative;
+		}
+
+		.each-bar-img {
+			width: 20%;
+			height: 0.5rem;
+			position: absolute;
+			left: 40%;
+			top: 0.05rem;
+		}
+		.bar-text-box {
+			position: absolute;
+			bottom: 0px;
+			text-align: center;
+			width: 100%;
+			color: #737373;
+			font-weight: 900;
+			font-size: 0.3rem;
+		}
+		.bar-text-on {
+			color: #eec57d !important;
+		}
+		.bottom-bar-box-2 {
+			width: 100%;
+			height: 0.9rem;
+			position: fixed;
+			bottom: 0.92rem;
+			background-color: #FFF;
+			z-index: 99;	
+		}
+		.left-bottom-bar {
+			width: 33%;
+			height: 100%;
+			float: left;
+		}
+		.right-bottom-bar {
+			width: 67%;
+			height: 100%;
+			float: left;	
+			position: relative;
+		}
+		.bottomCheckPosition {
+			position: absolute;
+			left: 0.3rem;
+			top: 0.28rem;
+		}
+		.bottom-bar-title {
+			position: absolute;
+			left: 0.8rem;
+			top: 0.3rem;
+			font-size: 0.3rem;
+			color: #595959;
+			/* font-weight: 900; */
+		}
+		.total-price-box {
+			position: absolute;
+			top: 0.28rem;
+			font-size: 0.32rem;
+			color: #525252;
+		}
+		.total-price-title {
+			color: #595959;
+			font-weight: 900;
+		}
+		.total-price-content {
+			color: #d31826;
+			font-weight: 900;
+		}
+		.buyBtnBox {
+			width: 2.3rem;
+			height: 0.7rem;
+			/*line-height: 0.7rem;*/
+			background-color: #f9626d;
+			position: absolute;
+			font-size: 0.32rem;
+			/* font-weight: 900; */
+			top: 0.1rem;
+			right: 0.15rem;
+			text-align: center;
+			color: #FFF;
+			border-radius: 0.15rem;
+		}
+		.buyBtnTitleBox {
+			line-height: 0.7rem;
+		}
+		.chooseItemBox {
+			font-size: 0.18rem;
+			position: absolute;
+			top: 0.23rem;
+			left: 1.7rem;
+		}
+
+/*新增*/
+.transparent-box {
+	background: rgba(0, 0, 0, 0.25);
+	width: 100%;
+    height: 100%; 
+    position: absolute;
+    top: 0px;
+    left: 0px;
+    z-index: 100;
+    display:none;
+}
+.certain-box {
+	width: 100%;
+	height: 0;
+	position: fixed;
+	bottom: 0px;
+	z-index: 101;
+	background-color: #FFF;
+}
+.name-with-phone-parent-box {
+	width: 90%;
+	height: 0.8rem;
+	position: relative;
+	font-weight: 900;
+	margin: 0 auto;
+}
+.certain-title-box {
+	width: 90%;
+	height: 0.8rem;
+	font-size: 0.34rem;
+	line-height: 0.8rem;
+	position: relative;
+	font-weight: 900;
+	margin: 0 auto;
+}
+.closeBtn {
+	position: absolute;
+	top: 0px;
+	right: 0px;
+}
+.letter-box {
+	width: 100%;
+	height: 0.04rem;
+	background: url(/images/sucai/letter.png);
+	background-size: 1.24rem 0.04rem;
+}
+.name-with-phone-box {
+	font-weight: 900;
+	font-size: 0.26rem;
+	margin-top: 0.2rem;
+	/*margin-bottom: 0.1rem;*/
+	color: #404040;
+}
+.name {
+	color: #737373;
+}
+.address-box {
+	color: #a6a4a4;
+	font-weight: 900;
+	font-size: 0.22rem;
+	margin-top: 0.1rem;
+	margin-bottom: 0.1rem;
+	position: relative;
+}
+
+/*这招三角形*/
+.transparent-trangel {
+	width: 0px;
+	height: 0px;
+	border-top: 0.15rem solid #FFF;
+	border-left: 0.15rem solid transparent;
+	border-right: 0.15rem solid transparent;
+	border-bottom: 0.15rem solid transparent;
+	position: absolute;
+	top: 0.32rem;
+	right: 0px;
+	z-index: 3;
+}
+/*下三角*/
+.down-trangel {
+	width: 0px;
+	height: 0px;
+	border-top: 0.15rem solid #4d4d4d;
+	border-left: 0.15rem solid transparent;
+	border-right: 0.15rem solid transparent;
+	border-bottom: 0.15rem solid transparent;
+	position: absolute;
+	top: 0.37rem;
+	right: 0px;
+}
+
+
+/*优惠券*/
+.coupons-box {
+	width: 90%;
+	height: 0.8rem;
+	position: relative;
+	font-weight: 900;
+	margin:  0 auto;
+	border-bottom:  0.03rem dashed #dbdbdb;
+}
+.rest-count-coupons {
+	color: #d31826;
+	position: absolute;
+	top: 0.25rem;
+	right: 0.4rem;
+	font-size: 0.3rem;
+	padding: 0px;
+}
+.coupons-title {
+	line-height: 0.8rem;
+	height: 100%;
+	width: 100%;
+	font-size: 0.30rem;
+}
+.order-supplement-title {
+	line-height: 0.8rem;
+	height: 100%;
+	width: 100%;
+	font-size: 0.3rem;
+}
+.order-supplement-box {
+	width: 90%;
+	margin: 0 auto;
+	height: 0.8rem;
+	position: relative;
+	font-weight: 900;
+	border-bottom:  0.03rem dashed #dbdbdb;
+}
+.rest-count-coupons-content {
+	margin-right: 0.04rem;
+}
+.order-supplement-title input {
+	border:  none;
+	color: #c4c4c4;
+	font-size: 0.24rem;
+}
+/*支付方式*/
+.pay-box {
+	width: 90%;
+    height: 0.8rem;
+    position: relative;
+    font-weight: 900;
+    margin:  0 auto;
+    border-bottom:  0.03rem dashed #dbdbdb;
+}
+.pay-box-title {
+	width: 100%;
+	height: 100%;
+	line-height: 0.8rem;
+	font-size: 0.3rem;
+}
+.wx-pay-box {
+	font-size: 0.3rem;
+	position: absolute;
+	top: 0.23rem;
+	right: 0.4rem;
+}
+.wx-pay-box img {
+	display: inline-block;
+	width: 0.44rem;
+	height: 0.39rem;
+	position: absolute;
+	top: 0.02rem;
+	left: 0px;
+}
+.wx-pay-title {
+	display: inline-block;
+    height: 100%;
+    text-align: right;
+    padding: 0.03rem 0px 0.03rem 0.5rem;
+}
+.wx-pay-title img {
+	display: inline-block;
+	width: 0.44rem;
+	height: 0.39rem;
+	position: absolute;
+	top: 0px;
+	left: 0px;
+}
+.certian-pay-for-box {
+	width: 90%;
+	height: 0.7rem;
+	position: fixed;
+	bottom: 0.2rem;
+	text-align: center;
+	color: #FFF;
+	background-color: #77bc1f;
+	font-size: 0.36rem;
+	line-height: 0.7rem;
+	border-radius: 0.08rem;
+	left: 5%;
+	cursor: pointer;
+}
+.nosee {
+	display: none !important;
+}
+.changeAddressBtn {
+	position: absolute;
+	right: 0px;
+	top: 0.1rem;
+	padding: 0.12rem 0.1rem;
+	color: #FFF;
+	background-color: #77bc1f;
+	font-size: 0.26rem;
+	border-radius: 0.08rem;
+}
+/*各种优惠券*/
+.many-coupons-box {
+	width: 90%;
+    height: 1.2rem;
+    font-size: 0.36rem;
+    /*line-height: 0.8rem;*/
+    position: relative;
+    font-weight: 900;
+    margin: 0 auto;
+	border-bottom: 0.03rem dashed #dbdbdb;
+}
+.parent-each-coupons-box {
+	background-color: #f8b551;
+	font-size: 0.26rem;
+	color: #FFF;
+	display: inline-block;
+	border-radius: 0.08rem;
+	margin: 0.25rem 0.3rem;
+}
+.each-coupons-box {
+	margin-left: 0.3rem;
+	border-left: 0.03rem dashed #FFF;
+	padding: 0.15rem 0.15rem 0.15rem  0.1rem;
+}
+.nc-box {
+	font-size: 0.3rem !important;
+	color: #5a5959;
+}
+.attr-box {
+	font-size: 0.22rem;
+    color: #b1b1b1;
+    padding-left: 0.1rem;
+    padding-right: 0.15rem;
+	margin-top: 0.05rem;
+	/*margin-bottom: 0.15rem;	*/
+}
+.delete-box {
+	width: 1rem;
+	height: 100%;
+	line-height: 2.3rem;
+	text-align: center;
+	color: #FFF;
+	font-size: 0.33rem;
+	background: #f9626d;
+	position: absolute;
+	top: 0px;
+	right: 0px;
+}
+.edit-bar-box span {
+	color: #696969;
+}
+.more-detail-transparent-position {
+	top: 0.55rem !important;
+	right: 1.5rem !important;
+}
+.more-detail-position {
+	top: 0.6rem !important;
+	right: 1.5rem !important;
+}
+/*不能购买*/
+.uncertian-pay-for-box {
+	background-color: #BCBDBB;
+	width: 90%;
+	height: 0.7rem;
+	position: fixed;
+	bottom: 0.2rem;
+	text-align: center;
+	color: #FFF;
+	font-size: 0.36rem;
+	line-height: 0.7rem;
+	border-radius: 0.08rem;
+	left: 5%;
+}
+
+/*增加地址按钮*/
+.addAddressBtnA {
+	text-decoration: none;
+}
+.addAddressBtn {
+	width: 2.3rem;
+    height: 0.5rem;
+    text-align: center;
+    line-height: 0.5rem;
+    background-color: #F74040;
+    color: #FFF;
+    border-radius: 0.1rem;
+    margin: 0 auto;
+    font-size: 0.3rem;
+}
+.pay-trangle-image, .coupons-trangle-image {
+	display: block;
+	position: absolute;
+	position: absolute;
+	top: 0.4rem;
+	right: 0px;
+	width: 0.27rem;
+	height: 0.12rem;
+}
+/*支付方式*/
+.choose-pay-way-box {
+	width: 100%;
+	height: 1rem;
+}
+.each-pay-box {
+	width: 50%;
+	height: 100%;
+	float: left;
+	text-align: center;
+	font-size: 0.28rem;
+}
+.each-pay-box img {
+	margin: 0.1rem auto;
+}
+.wei-pay-btn {
+	display: block;
+	width: 0.44rem;
+    height: 0.39rem;
+}
+.ali-pay-btn {
+	display: block;
+	width: 0.44rem;
+	height: 0.44rem;
+}
+.qrcodeImg {
+	width: 4rem;
+    height: 4rem;
+    /* border: 1rem; */
+    /* border-color: red; */
+    z-index: 101;
+    position: absolute;
+    /*background-color: red;*/
+    left: 1.5rem;
+    top: 4.5rem;
+}
+.qrcodeImg img {
+	margin: 0 auto;
+	display: block;
+}
+.remindText {
+	text-align: center;
+	font-size: 0.3rem;
+	color: #FFF;
+	margin-top: 0.1rem;
+}
+/*使用圆形*/
+.use-circle {
+	width: 0.3rem;
+    height: 0.3rem;
+    background-color: #dbdbdb;
+    position: absolute;
+    top: 0.4rem;
+    right: 0.4rem;
+    border-radius: 100%;
+    box-shadow: 0 0 0.05rem gray;
+    border: 0.1rem solid #FFF;
+}
+.circle-on {
+	background-color: #f8b551;
+}
+.shop-cart-bottom-line {
+	width: 100%;
+	height: 0.01rem;
+	position: fixed;
+	bottom: 0.91rem;
+	left: 0px;
+	background-color: #EFEBEB;
+}

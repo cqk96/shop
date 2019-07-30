@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>apk管理</title>
+    <link rel="stylesheet" href="../../layuiadmin/layui/css/layui.css" media="all">
+    <link rel="stylesheet" href="../../layuiadmin/style/table.css" media="all">
+</head>
+<body>
+<div class="layui-row table-box">
+    <div class="table-title layui-col-md12">apk管理
+        <ul class="table-title-tool">
+            <li title="添加" data-name="other">
+                <a href="other/addApk.html" id="apkId">
+                    <img src="../../images/tianjia.png" alt="">
+                    <span style="display: none">添加包管理</span>
+                </a>
+            </li>
+        </ul>
+    </div>
+    <!--表格-->
+    <div id="apkTable" class="table-data layui-col-md12" lay-filter="table-tool"></div>
+</div>
+</body>
+<script type="text/html" id="tableTool">
+    <a class="layui-btn layui-btn-primary layui-btn-xs" lay-event="detail">查看</a>
+    <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>
+</script>
+<script type="text/html" id="download">
+    <a class="layui-btn layui-btn-primary layui-btn-xs" lay-event="download">下载</a>
+</script>
+<script type="text/javascript" src="../../layuiadmin/layui/layui.js"></script>
+<script type="text/javascript" src="../../layuiadmin/js/global.js"></script>
+
+<script>
+
+
+    layui.config({
+        base: '../layuiadmin/' //静态资源所在路径
+    }).extend({
+        index: 'lib/index' //主入口模块
+    }).use([ 'jquery', 'element', 'table','form', 'tree'], function () {
+        $ = layui.$;
+        var table = layui.table;
+        var form = layui.form;
+
+        username = getCookie('username');
+        accessToken = getCookie('accessToken');
+        var page = 1; // 第一页
+        var pageSize = 10; // 每页的行数
+
+
+        table.render({
+            elem: '#apkTable'
+            , url: parent.layui.setter.host + '/api/v1/apk/lists'
+            , type: 'get'
+            , cols: [[
+                {field: 'name', title: '应用名称', align: 'center'}
+                , {field: 'versionCode', title: '开发版本', align: 'center'}
+                , {field: 'url', title: '包地址', align: 'center',toolbar: '#download'}
+                , {title: '操作', toolbar: '#tableTool', align: 'center', fixed: 'right',width:180}
+            ]]
+            , skin: 'nob' //行边框风格
+            , request: {
+                pageName: 'page' //页码的参数名称，默认：page
+                , limitName: 'size' //每页数据量的参数名，默认：limit
+            }
+            , where: {
+                access_token: accessToken,
+                user_login: username,
+            }
+            , response: {
+                statusName: 'code' //数据状态的字段名称，默认：code
+                , statusCode: '001' //成功的状态码，默认：0
+                , msgName: 'message' //状态信息的字段名称，默认：msg
+                , countName: 'totalCount' //数据总数的字段名称，默认：count
+                , dataName: 'data' //数据列表的字段名称，默认：data
+            }
+            , page: {
+                layout: ['prev', 'page', 'next', 'count', 'skip', 'limit'] //自定义分页布局
+                , groups: 5 //只显示 5 个连续页码
+                , first: "首页" //显示首页
+                , last: "尾页" //显示尾页
+                , limit: pageSize
+            }
+            ,loading : true
+            , done: function (res) {
+                identityFailure(res.code)
+            }
+
+        });
+
+        //监听工具条
+        table.on('tool(table-tool)', function(obj){
+            var data = obj.data;
+            if(obj.event === 'detail'){ // 查看
+                var index = null;
+                var farmDetail = '';
+                // 获取详情
+                $.ajax({
+                    url : parent.layui.setter.host + '/api/v1/apk/read',
+                    type: 'get',
+                    data : {
+                        "access_token":accessToken,
+                        "user_login":username,
+                        "id":data.id
+                    },
+                    beforeSend: function () {
+                        index = layer.load();
+                    },
+                    success : function(res){
+                        layer.close(index);
+                        var $thisDetail = res.data;
+
+                        console.log(res);
+                        var contentStr = '';
+                        contentStr += '<table id="detailTable" class="layui-table detail-table">';
+                        contentStr += "<tbody>";
+                        contentStr +=       "<tr>";
+                        contentStr +=            "<td>应用名称:</td>";
+                        contentStr +=            "<td>"+$thisDetail.name+"</td>";
+                        contentStr +=       "</tr>";
+                        contentStr +=       "<tr>";
+                        contentStr +=            "<td>开发版本:</td>";
+                        contentStr +=            "<td>"+$thisDetail.version_code+"</td>";
+                        contentStr +=       "</tr>";
+                        contentStr +=       "<tr>";
+                        contentStr +=            "<td>用户版本:</td>";
+                        contentStr +=            "<td>"+$thisDetail.version_text+"</td>";
+                        contentStr +=       "</tr>";
+                        contentStr +=       "<tr>";
+                        contentStr +=            "<td>下载包:</td>";
+                        contentStr +=            "<td><a href="+parent.layui.setter.host + $thisDetail.apk_url + " class='layui-btn layui-btn-xs'>点击下载</a></td>";
+                        contentStr +=       "</tr>";
+                        contentStr +=       "<tr>";
+                        contentStr +=            "<td>描述:</td>";
+                        contentStr +=            "<td>"+$thisDetail.description+"</td>";
+                        contentStr +=       "</tr>";
+                        contentStr +=       "<tr>";
+                        contentStr +=            "<td>更新时间:</td>";
+                        contentStr +=            "<td>"+UnixToDate($thisDetail.update_time)+"</td>";
+                        contentStr +=       "</tr>";
+
+                        contentStr +=       "<tr>";
+                        contentStr +=            "<td>创建时间:</td>";
+                        contentStr +=            "<td>"+UnixToDate($thisDetail.create_time)+"</td>";
+                        contentStr +=       "</tr>";
+                        contentStr +=  "</tbody>";
+                        contentStr += '</table>';
+
+                        layer.open({
+                            type : 1 ,
+                            title : "apk包详情",
+                            area : ["500px","350px"],
+                            btn :["确认", "取消"],
+                            yes : function (index) {
+
+                                layer.close(index);
+                            },
+                            btn2: function (index) {
+                                layer.close(index);
+                            },
+                            content : contentStr
+                        });
+
+                    },
+                    error : function (res) {
+                        console.log(res)
+                    }
+                });
+
+
+            } else if(obj.event === 'del'){ // 删除
+                layer.confirm('真的删除行么', function(index){
+                    // console.log(data.id);
+                    layui.$.ajax({
+                        url : parent.layui.setter.host + '/api/v1/apk/delete?access_token='+accessToken+'&user_login='+username + '&ids=' +data.id,
+                        type : 'post',
+                        dataType: 'json',
+                        success : function (res) {
+
+                            if (res.status.code == '094'){
+                                layer.msg(''+res.status.message+'');
+                                return;
+                            }else {
+                                layer.msg('删除成功');
+                                obj.del();
+                            }
+
+
+                        },
+                        error : function (res) {
+                            layer.msg('删除失败');
+                        }
+                    });
+
+                    layer.close(index);
+                });
+
+                form.render();
+            }
+            if(obj.event === 'download'){ // 成长档案
+                // console.log(data.url)
+                $(this).attr('href',parent.layui.setter.host +data.url)
+            }
+
+
+        });
+
+    });
+
+</script>
+</html>

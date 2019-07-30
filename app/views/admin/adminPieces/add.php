@@ -1,0 +1,32 @@
+<?php include_once('../app/views/admin/_header.php') ?>
+<style type="text/css">
+	th {
+		width: 100px;
+	}
+</style>
+<div class='main-container'>
+<form id="myForm" method='POST' action="/admin/piece/create" style='padding:20px !important;'  enctype='multipart/form-data'>
+<table>
+<div class="smart-widget">
+	<div class="smart-widget-header">
+		<?php echo $page_title;?>
+	</div>
+    <?php include_once '_form.php'; ?>
+</table>
+</form>
+</div>
+<?php include_once('../app/views/admin/_footer.php') ?>
+<script type='text/javascript' src='/js/myFuncs.js'></script>
+<script type='text/javascript' src='/js/admin-news.js'></script>
+
+<script type="text/javascript">
+// 提交锁定 
+	// 提交锁定 
+	function stopSubmit(){
+	document.getElementById('stopsubmit').disabled=true;
+	$("#myForm").submit();
+	//alert('添加成功！'); 
+	return false;
+	}
+	
+</script>

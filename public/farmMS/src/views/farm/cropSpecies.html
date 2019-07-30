@@ -1,0 +1,451 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>作物种类管理</title>
+    <link rel="stylesheet" href="../../layuiadmin/layui/css/layui.css" media="all">
+    <link rel="stylesheet" href="../../layuiadmin/style/table.css" media="all">
+    <style type="text/css">
+    .acre-box {
+        font-size: 16px;
+    }
+    .crop-amount-box {
+        font-size: 14px;
+        color: #6cd06c;
+    }
+    </style>
+</head>
+<body>
+<div class="layui-row table-box">
+    <div class="table-title layui-col-md12">作物种类管理
+        <ul class="table-title-tool">
+            <li title="添加" data-name="other">
+                <a href="#">
+                    <img class="createBtn" src="../../images/tianjia.png" alt="">
+                    <span style="display: none">添加作物种类</span>
+                </a>
+            </li>
+        </ul>
+    </div>
+
+    <!--表格-->
+    <div id="areaTable" class="table-data layui-col-md12" lay-filter="table-tool"></div>
+</div>
+</body>
+<script type="text/html" id="tableTool">
+    <a class="layui-btn layui-btn-primary layui-btn-xs" lay-event="detail">查看</a>
+    <a class="layui-btn layui-btn-xs layui-btn-normal" lay-event="edit">编辑</a>
+    <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>
+</script>
+<script type="text/javascript" src="../../layuiadmin/layui/layui.js"></script>
+<script type="text/javascript" src="../../layuiadmin/js/global.js"></script>
+
+<script>
+
+function checkEmpty(domId)
+{
+    
+    var rs = new Array();
+    rs['ok'] = true;
+    rs['domId'] = '';
+    rs['placeholder'] = '';
+    $("#"+domId).find("input[type='text']").each(function(){
+        var isRequired = $(this).attr("required");
+        var curDomId = $(this).attr("id");
+        var placeholder = $(this).attr("placeholder")==""? '请填写此项':$(this).attr("placeholder");
+        var curValue = $(this).val();
+        if( typeof(isRequired)!="undefined" ) { 
+            if( curValue=="" ){
+                rs['ok'] = false;
+                rs['domId'] = curDomId;
+                rs['placeholder'] = placeholder;
+                return false;
+            }
+        }
+    });
+
+    $("#"+domId).find("textarea").each(function(){
+        var isRequired = $(this).attr("required");
+        var curDomId = $(this).attr("id");
+        var placeholder = $(this).attr("placeholder")==""? '请填写此项':$(this).attr("placeholder");
+        var curValue = $(this).val();
+        if( typeof(isRequired)!="undefined" ) { 
+            if( curValue ){
+                rs['ok'] = false;
+                rs['domId'] = curDomId;
+                rs['placeholder'] = placeholder;
+                return false;
+            }
+        }
+    });
+
+    return rs;
+
+}
+    layui.config({
+        base: '../layuiadmin/' //静态资源所在路径
+    }).extend({
+        index: 'lib/index' //主入口模块
+    }).use([ 'jquery', 'element', 'table','form', 'tree'], function () {
+        $ = layui.$;
+        var element = layui.element;
+        var table = layui.table;
+        var form = layui.form;
+
+        username = getCookie('username');
+        accessToken = getCookie('accessToken');
+        tokenInvalid(accessToken,username)
+        var page = 1; // 第一页
+        var pageSize = 10; // 每页的行数
+
+        var host = parent.layui.setter.host;
+        var tableLists = table.render({
+        	url: host+'/api/v1/cropType/lists'
+            ,elem: '#areaTable'
+            ,where: {
+                access_token: accessToken,
+                user_login: username
+            }
+            ,cols: [[
+                {field:'id',title:'序号', width:60, align:'center'}
+                ,{field:'name', title: '作物种类名称', align:'center'}
+                ,{title: '操作', toolbar :'#tableTool', align:'center'}
+            ]]
+            ,skin: 'line' //行边框风格
+            ,response: {
+			  statusName: 'code' //数据状态的字段名称，默认：code
+              ,statusCode: '001' //成功的状态码，默认：0
+			  ,msgName: 'message' //状态信息的字段名称，默认：msg
+			  ,countName: 'totalCount' //数据总数的字段名称，默认：count
+			  ,dataName: 'data' //数据列表的字段名称，默认：data
+			}  
+            ,request: {
+                pageName: 'page' //页码的参数名称，默认：page
+                ,limitName: 'size' //每页数据量的参数名，默认：limit
+            }
+            , page: {
+                layout: ['prev', 'page', 'next', 'count', 'skip','limit'] //自定义分页布局
+                , groups: 5 //只显示 5 个连续页码
+                , first: "首页" //显示首页
+                , last: "尾页" //显示尾页
+                , limit: pageSize
+            }
+            ,done : function (res) {
+                identityFailure(res.code);
+            }
+        });
+
+        // 增加作物种类
+        $('.createBtn').click(function(){
+            var contentStr = '';
+            contentStr += '<table id="detailTable" lay-filter="detailTable" class="layui-table" >';
+            contentStr += "<thead>";
+            contentStr +=       "<tr>";
+            contentStr +=            "<th>填写项</th>";
+            contentStr +=            "<th>数据值</th>";
+            contentStr +=       "</tr>";
+            contentStr +=  "</thead>"
+            contentStr += "<tbody>";
+            contentStr +=       "<tr>";
+            contentStr +=            "<td lay-data='{field:'cropTypeName'}'>作物种类名称</td>";
+            contentStr +=            "<td><input required id='name' type='text' name='name' class='layui-input' value='' placeholder='请添加作物种类名称' /></td>";
+            contentStr +=       "</tr>";
+            contentStr +=  "</tbody>"
+            contentStr += '</table>';
+
+            layer.open({
+                title : "作物种类详情",
+                btn :["确认", "取消"],
+                yes : function (index) {
+                    var rs = checkEmpty("detailTable");
+                    if( !rs['ok'] ) {
+                        $("#"+rs['domId']).focus();
+                        return false;
+                    }
+
+                    $.ajax({
+                        url:  host + "/api/v1/cropType/create",
+                        type : 'post',
+                        dataType: 'json',
+                        data: {
+                            access_token: accessToken,
+                            user_login: username,
+                            name: $.trim( $("#name").val() )
+                        },
+                        async: false,
+                        success : function (res) {
+
+                            identityFailure(res.status.code);
+
+                            if (res.status.code != '001'){
+                                layer.msg(''+res.status.message+'');
+                                return false;
+                            }else {
+                                layer.msg('添加成功');
+                                tableLists.reload();
+                            }
+                        }
+                    })
+                    layer.close(index);
+                },
+                btn2: function (index) {
+                    layer.close(index);
+                },
+                content : contentStr,
+                success: function(){
+                    table.render("#detailTable");
+                }
+            });
+        });
+
+        //监听工具条
+        table.on('tool(table-tool)', function(obj){
+            var data = obj.data;
+            if(obj.event === 'detail'){ // 查看
+
+                layer.load();
+
+                $.ajax({
+                    url : host + '/api/v1/cropType/detail?access_token='+accessToken+'&user_login='+username + '&id=' +data.id,
+                    type: 'get',
+                    cache: false,
+                    dataType: "JSON",
+                    async: true,
+                    success : function(res){
+
+                        layer.closeAll('loading');
+
+                        identityFailure(res.status.code);
+
+                        if( !res['status']['success'] ) {
+                            layer.msg(res['status']['message'], {time: 2000});
+                            return false;
+                        }
+                       
+                        var curName = res['data']['name'];
+                        var curUpdateTime = res['data']['update_time'];
+
+                        var dateObj = new Date(curUpdateTime*1000);
+                        // var curDateObj = dateObj.setTime(curUpdateTime*1000);
+                        // var curDate = dateObj.toString();
+                        var year = dateObj.getFullYear();
+                        var month= dateObj.getMonth()+1;
+                        var day = dateObj.getDate();
+                        var hour = dateObj.getHours()+1;
+                        var min = dateObj.getMinutes()+1;
+                        
+                        var curDateStr = year + "-" + month + "-" + day + " " + hour + ":" + min;
+
+                        var curAcreDetail = '';
+
+                        var acreDetailArr = res['data']['acreDetailArr'];
+
+                        var contentStr = '';
+                        contentStr += '<table id="detailTable" lay-filter="detailTable" class="layui-table" >';
+                        contentStr += "<thead>";
+                        contentStr +=       "<tr>";
+                        contentStr +=            "<th colspan='2'>" + curName + "</th>";
+                        contentStr +=       "</tr>";
+                        contentStr +=       "<tr>";
+                        contentStr +=            "<th>种植地块</th>";
+                        contentStr +=            "<th>种植数量</th>";
+                        contentStr +=       "</tr>";
+                        contentStr +=  "</thead>"
+                        contentStr += "<tbody>";
+
+                        if( acreDetailArr!=null && acreDetailArr.length!=0) {
+
+                            for (var i = 0; i < acreDetailArr.length; i++) {
+
+                                var acreName = acreDetailArr[i]['name'];
+                                var acreAmount = acreDetailArr[i]['totalCount'];
+
+                                contentStr +=       "<tr>";
+                                contentStr +=            "<td><div class='acre-box'>" + acreName + "</div></td>";
+                                contentStr +=            "<td><span class='crop-amount-box'>" + acreAmount + "株"+ "</div></td>";
+                                contentStr +=       "</tr>";
+
+                            }
+
+                        }
+
+                        contentStr +=  "</tbody>"
+                        contentStr += '</table>';
+
+                        layer.open({
+                            title : "作物种类详情",
+                            btn :["确认", "取消"],
+                            yes : function (index) {
+                                layer.close(index);
+                            },
+                            btn2: function (index) {
+                                layer.close(index);
+                            },
+                            content : contentStr,
+                            success: function(){
+                                table.render("#detailTable");
+                            }
+                        });
+
+                    },
+                    error : function (res) {
+                        // console.log(res);
+                    }
+                });
+
+            } else if(obj.event === 'del'){ // 删除
+                layer.confirm('确定要删除嘛?', function(index){
+                    // console.log(data.id);
+                    $.ajax({
+                        url : host + '/api/v1/cropType/delete',
+                        type : 'post',
+                        dataType: 'json',
+                        data: {
+                            access_token: accessToken,
+                            user_login: username,
+                            ids: data.id
+                        },
+                        async: false,
+                        success : function (res) {
+
+                            identityFailure(res.status.code);
+
+                            if (res.status.code !== '001'){
+                                layer.msg(res.status.message);
+                                return;
+                            }else {
+                                layer.msg(res.status.message);
+                                obj.del();
+                            }
+
+
+                        },
+                        error : function (res) {
+                            layer.msg('删除失败');
+                        }
+                    });
+
+                    layer.close(index);
+                });
+
+                form.render();
+            }else if(obj.event === 'edit'){//编辑
+
+                layer.load();
+
+                $.ajax({
+                    url : host + '/api/v1/cropType/read?access_token='+accessToken+'&user_login='+username + '&id=' +data.id,
+                    type: 'get',
+                    cache: false,
+                    dataType: "JSON",
+                    async: true,
+                    success : function(res){
+
+                        layer.closeAll('loading');
+
+                        identityFailure(res.status.code);
+
+                        if( !res['status']['success'] ) {
+                            layer.msg(res['status']['message'], {time: 2000});
+                            return false;
+                        }
+                        
+                        var curId = res['data']['id'];
+                        var curName = res['data']['name'];
+                        var curUpdateTime = res['data']['update_time'];
+
+                        var dateObj = new Date(curUpdateTime*1000);
+                        // var curDateObj = dateObj.setTime(curUpdateTime*1000);
+                        // var curDate = dateObj.toString();
+                        var year = dateObj.getFullYear();
+                        var month= dateObj.getMonth()+1;
+                        var day = dateObj.getDate();
+                        var hour = dateObj.getHours()+1;
+                        var min = dateObj.getMinutes()+1;
+                        
+                        var curDateStr = year + "-" + month + "-" + day + " " + hour + ":" + min;
+
+                        var contentStr = '';
+                        contentStr += '<table id="detailTable" lay-filter="detailTable" class="layui-table" data-id=' + curId + ' >';
+                        contentStr += "<thead>";
+                        contentStr +=       "<tr>";
+                        contentStr +=            "<th>数据名称</th>";
+                        contentStr +=            "<th>数据值</th>";
+                        contentStr +=       "</tr>";
+                        contentStr +=  "</thead>"
+                        contentStr += "<tbody>";
+                        contentStr +=       "<tr>";
+                        contentStr +=            "<td lay-data='{field:'username'}'>作物种类名称</td>";
+                        contentStr +=            "<td><input required id='name' type='text' name='name' class='layui-input' value='" + curName + "' placeholder='请添加作物种类名称' /></td>";
+                        contentStr +=       "</tr>";
+                        contentStr +=       "<tr>";
+                        contentStr +=            "<td lay-data='{field:'updateTime'}'>操作时间</td>";
+                        contentStr +=            "<td>" + curDateStr+ "</td>";
+                        contentStr +=       "</tr>";
+                        contentStr +=  "</tbody>"
+                        contentStr += '</table>';
+
+                        layer.open({
+                            title : "作物种类详情",
+                            btn :["保存", "取消"],
+                            yes : function (index) {
+
+                                var rs = checkEmpty("detailTable");
+                                
+                                if( !rs['ok'] ) {
+                                    $("#"+rs['domId']).focus();
+                                    return false;
+                                }
+
+                                /*进行修改*/
+                                $.ajax({
+                                    url: "/api/v1/cropType/update",
+                                    type: "POST",
+                                    dataType: "JSON",
+                                    async: false,
+                                    data: {
+                                        name: $.trim( $("#name").val() ),
+                                        id: $.trim( $("#detailTable").attr("data-id") ),
+                                        user_login: username,
+                                        access_token: accessToken
+                                    },
+                                    success: function(response){
+
+                                        identityFailure(response['status']['code']);
+                                        
+                                        if( response['status']['success'] ) {
+                                            layer.msg(response['status']['message']);
+                                            setTimeout(function(){
+                                                // window.location.reload();
+                                                tableLists.reload();
+                                            }, 1400);
+                                        } else {
+                                            layer.msg(response['status']['message']);
+                                        }
+                                    }
+                                });
+                                layer.close(index);
+                            },
+                            btn2: function (index) {
+                                layer.close(index);
+                            },
+                            content : contentStr,
+                            success: function(){
+                                table.render("#detailTable");
+                            }
+                        });
+
+                    },
+                    error : function (res) {
+                        // console.log(res);
+                    }
+                });
+
+            }
+        });
+
+
+    });
+
+</script>
+</html>

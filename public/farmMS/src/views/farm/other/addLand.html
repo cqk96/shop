@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>添加人员</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=0">
+    <link rel="stylesheet" href="../../../layuiadmin/layui/css/layui.css" media="all">
+    <link rel="stylesheet" href="../../../layuiadmin/style/otherHtml.css" media="all">
+</head>
+<body>
+<div class="personal-box">
+    <!--信息-->
+    <div class="data-message layui-form" lay-filter="detailForm">
+
+        <div class="data-message-title">
+            <i class="layui-icon">❶</i>
+            <span>基础信息</span>
+            <span class="required" style="font-size: 10px;">注:' * '为必填项</span>
+        </div>
+        <div class="data-message-form layui-row layui-col-space15">
+            <div class="layui-col-md6">
+                <div class="data-item ">
+                    <label class="data-label">地块名称<span class="required">*</span></label>
+                    <input type="text" class="layui-input" name="name" id="name" placeholder="请输入名称" lay-verify="required|name">
+
+                </div>
+            </div>
+            <div class="layui-col-md6">
+                <div class="data-item">
+                    <label class="data-label">地块面积<span class="required">*</span></label>
+                    <input type="text" class="layui-input" name="acreage" id="acreage" placeholder="请输入面积,可输入两位小数,默认单位㎡" lay-verify="required|number">
+                </div>
+            </div>
+            <div class="layui-col-md6">
+                <div class="data-item">
+                    <label class="data-label">片区数<span class="required">*</span></label>
+                    <input type="text" class="layui-input" name="areaAmount" id="areaAmount" placeholder="请输入片区数" lay-verify="required">
+                </div>
+            </div>
+
+            <!--// 负责人-->
+            <div class="layui-col-md12">
+                <div class="data-item">
+                    <label class="data-label">负责人<span class="required">*</span></label>
+                    <div class="manager checkout-list">
+
+                    </div>
+                </div>
+            </div>
+            <div class="layui-col-md12">
+                <div class="data-item">
+                    <label class="data-label">所属农场<span class="required">*</span></label>
+                    <div class="farm  checkout-list">
+
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <div class="button-box">
+            <button  lay-submit type="button" class="layui-btn layui-btn-normal" lay-filter="formSubmit">提交</button>
+            <button type="button" class="layui-btn layui-btn-primary" onclick="javascript:history.back(-1);">返回</button>
+
+        </div>
+    </div>
+</div>
+
+
+<script src="../../../layuiadmin/layui/layui.js"></script>
+<script src="../../../layuiadmin/jQuery/jquery-1.9.1/jquery.min.js"></script>
+<script src="../../../layuiadmin/js/global.js"></script>
+<script>
+
+    var submitting = false;
+
+    layui.config({
+        base: '../../layuiadmin/' //静态资源所在路径
+    }).extend({
+        index: 'lib/index' //主入口模块
+    }).use(['form','element','laydate','upload'] ,function () {
+        var form = layui.form;
+        username = getCookie('username');
+        accessToken = getCookie('accessToken');
+        var $pervId = getCookie('$landId');//上个页面的id 判断新建还是编辑
+
+        // 获取负责人列表
+        $.ajax({
+            url : parent.layui.setter.host + '/api/v1/user/all?access_token='+accessToken+'&user_login='+username
+            ,type : 'get'
+            ,async:false
+            ,success : function (res) {
+                var lists = res.data;
+                if(res.code== '006' || res.code== '007' || res.code=='014'){
+                    parent.window.location.href="/crmFE/src/views/user/login.html";
+                }
+                for (var i = 0 ; i <= lists.length - 1; i++){
+
+                    //
+                    var managerHtml = '<input type="radio" name="manager_id" title="'+lists[i].name +'" id="'+lists[i].id+'">';
+
+                    $(".manager").append(managerHtml);
+
+                    form.render();
+                }
+            }
+            ,error : function (res) {
+
+                console.log(res);
+            }
+        });
+
+        //获取农场列表
+        $.ajax({
+            url : parent.layui.setter.host + '/api/v1/farm/all?access_token='+accessToken+'&user_login='+username
+            ,type : 'get'
+            ,async:false
+            ,success : function (res) {
+                var lists = res.data;
+                for (var i = 0 ; i <= lists.length - 1; i++){
+
+                    var farmHtml = '<input type="radio" name="farmId" title="'+lists[i].name +'" id="'+lists[i].id+'">';
+
+                    $(".farm").append(farmHtml);
+
+                    form.render();
+                }
+            }
+            ,error : function (res) {
+
+                console.log(res);
+            }
+        });
+
+        if ( $pervId > 0){
+
+            //获取地块详情
+            $.ajax({
+                url : parent.layui.setter.host + '/api/v1/acre/read'
+                ,type : 'get'
+                ,data : {
+                    "access_token": accessToken
+                    ,"user_login": username
+                    ,"id" : $pervId
+                }
+                ,success : function (res) {
+                    var formStr = res.data;
+
+                    if(res.code== '006' || res.code== '007' || res.code=='014'){
+                        parent.window.location.href="/crmFE/src/views/user/login.html";
+                    }
+
+                    form.val("detailForm", {
+                        "acreage": formStr.acreage
+                        ,"name": formStr.name
+                        ,"areaAmount": formStr.area_amount
+                    });
+
+                    // 负责人
+                    var allInput =  $(".manager input"); // 获取页面显示的全部的部门
+
+                    for (var j = 0; j <= allInput.length - 1; j++){
+
+                        var allId = allInput[j].id;  // 拿到页面中 全部的id
+                        var allSelect = formStr.manager_id; // 获取该账号的选中的信息
+
+                        if (allId == allSelect) {
+                            $('.manager').find('#'+allId+'').prop("checked", true);
+                        }
+
+                    }
+                    // 所属农场
+                    var allFarmInput =  $(".farm input"); // 获取页面显示的全部的部门
+
+                    if (allFarmInput.length == '0'){
+                        var allId = allFarmInput.attr('id');  // 拿到页面中 全部的id
+                        var allSelect = formStr.farm_id; // 获取该账号的选中的信息
+
+                        if (allId == allSelect) {
+                            $('.farm').find('#'+allId+'').prop("checked", true);
+                        }
+                    }else {
+                        for (var j = 0; j <= allFarmInput.length - 1; j++){
+
+                            var allId = allFarmInput[j].id;  // 拿到页面中 全部的id
+                            var allSelect = formStr.farm_id; // 获取该账号的选中的信息
+
+                            if (allId == allSelect) {
+                                $('.farm').find('#'+allId+'').prop("checked", true);
+                            }
+
+                        }
+                    }
+
+
+                    form.render();
+
+                }
+                ,error : function (res) {
+                    console.log(res);
+                }
+            });
+
+            // 提交修改
+            form.on('submit(formSubmit)', function (data) {
+
+                if (submitting) {
+                    layer.msg("数据正在传输,请勿重复点击");
+                    return false;
+                }
+                submitting = true;
+                var formData = data.field;
+
+                // 负责人
+                var managerIdArr = [];
+                $("input:radio[name='manager_id']:checked").each(function() {
+                    var managerId = '';
+                    managerId +=  $(this).attr("id");
+
+                    managerIdArr.push(managerId);
+                    return managerIdArr;
+                });
+                if (managerIdArr == ''){
+                    layer.msg('请勾选负责人后再提交');
+                    submitting = false;
+                    return;
+                }
+                managerIdArr = managerIdArr.join(',');
+
+                //所属农场
+                var farmIdArr = [];
+                $("input:radio[name='farmId']:checked").each(function() {
+                    var farmId = '';
+                    farmId +=  $(this).attr("id");
+
+                    farmIdArr.push(farmId);
+                    return farmIdArr;
+                });
+                if (farmIdArr == ''){
+                    layer.msg('请勾选所属农场后再提交');
+                    submitting = false;
+                    return;
+                }
+                farmIdArr = farmIdArr.join(',');
+
+                formData['managerId'] = managerIdArr ;
+                formData['farmId'] = farmIdArr;
+                formData['access_token'] = accessToken ;
+                formData['user_login'] = username ;
+                formData['id'] = $pervId ;
+                for (var i in formData){
+                    delete formData.manager_id;
+                }
+
+                $.ajax({
+                    url: parent.layui.setter.host +'/api/v1/acre/update'
+                    ,type : 'post'
+                    ,data : formData
+                    ,success : function (res) {
+                        if(res.status.code !== '001'){
+                            layer.msg(res.status.message);
+                            submitting = false;
+                            return;
+                        }
+                        layer.msg(res.status.message+',正在跳转');
+                        backHistory();
+                    }
+                    ,error : function () {
+                        layer.msg('修改失败');
+                    }
+                });
+            });
+        }else{
+            // 新增页面
+            //监听提交
+            form.on('submit(formSubmit)', function (data) {
+
+                if (submitting) {
+                    layer.msg("数据正在传输,请勿重复点击");
+                    return false;
+                }
+                submitting = true;
+                var formData = data.field;
+                // 负责人
+                var managerIdArr = [];
+                $("input:radio[name='manager_id']:checked").each(function() {
+                    var managerId = '';
+                    managerId +=  $(this).attr("id");
+
+                    managerIdArr.push(managerId);
+                    return managerIdArr;
+                });
+                if (managerIdArr == ''){
+                    layer.msg('请勾选负责人后再提交');
+                    submitting = false;
+                    return;
+                }
+                managerIdArr = managerIdArr.join(',');
+                // 所属农场
+                var farmIdArr = [];
+                $("input:radio[name='farmId']:checked").each(function() {
+                    var farmId = '';
+                    farmId +=  $(this).attr("id");
+
+                    farmIdArr.push(farmId);
+                    return farmIdArr;
+                });
+                if (farmIdArr == ''){
+                    layer.msg('请勾选所属农场后再提交');
+                    submitting = false;
+                    return;
+                }
+                farmIdArr = farmIdArr.join(',');
+
+                formData['managerId'] = managerIdArr ;
+                formData['farmId'] = farmIdArr ;
+                formData['access_token'] = accessToken ;
+                formData['user_login'] = username ;
+
+
+                $.ajax({
+                    url: parent.layui.setter.host + '/api/v1/acre/create'
+                    ,type : 'post'
+                    ,data : formData
+                    ,success : function (res) {
+                        if(res.status.code !== '001'){
+                            layer.msg(res.status.message);
+                            submitting = false;
+                            return;
+                        }
+                        layer.msg(res.status.message+',正在跳转');
+                        backHistory();
+                    }
+                    ,error : function () {
+                        layer.msg('添加失败');
+                    }
+                });
+            });
+
+        }
+
+    });
+
+
+</script>
+</body>
+</html>

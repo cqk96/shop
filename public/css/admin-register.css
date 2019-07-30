@@ -1,0 +1,49 @@
+html,body,div,ul,li,iframe {
+  margin: 0px;
+  padding: 0px;
+}
+html,body {
+  width: 100%;
+  height: 100%;
+}
+body {
+  background: url(/images/bg.jpg);
+}
+.login-box {
+  width: 600px;
+  background-color: #FFF;
+  position: absolute;
+  z-index: 3;
+}
+.smart-widget {
+  margin-bottom: 0px;
+}
+.login_sub {
+  position: absolute;
+  top: 0px;
+  bottom: 0px;
+  z-index: 2;
+  box-shadow: 0 0 3px gray;
+  background-color: #e0e0e0;
+}
+.register-box {
+  z-index: 3;
+  position: relative;
+}
+.login_sub_level_1 {
+  top: 4px;
+  right: 6px;
+}
+.login_sub_level_2 {
+  top: 2px;
+  right: 3px;
+}
+.nosee {
+  display: none;
+}
+.showPassword:hover {
+  cursor: pointer;
+}
+.eyeOpen {
+  color: blue !important;
+}

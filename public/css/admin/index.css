@@ -1,0 +1,27 @@
+td img {display: block; width: 100px; height: 100px; margin: 0 auto; }
+thead td,thead th,tbody td,tbody th {text-align: center; }
+#indexTable {width: 100%; }
+/*头部样式*/
+#indexTable {width: 100%; }
+thead tr{height: 40px; }
+/*修改默认样式*/
+.smart-widget-header {margin-bottom: 5px; }
+.smart-widget {border-top-width: 0px; }
+.smart-widget .smart-widget-header {background-color: #86a4ee; color: #fff; }
+#indexTable tbody tr {height: 100px; }
+.singular {background-color: #f5f8fe; }
+#indexTable tbody tr:nth-child(2n+1){background:#f5f8fe; }
+.dual {background-color: #FFF; }
+#indexTable tbody tr:nth-child(2n){background:#FFF; }
+.smart-widget-option i {color: #FFF; }
+/*图像*/
+.operationBox a {display: block; width: 100%; margin-bottom: 10px; }
+.icon-img {margin-right: 5px; }
+.icon-img img{display: inline-block; width: 13px; height: 13px; }
+.operationBox {font-size: 12px; }
+/*分页样式*/
+.page-pagination {/*float: right; */margin-right: 27px; /*margin-top: 10px;*/ margin-bottom: 10px; }
+.page-pagination li {min-width: 20px; height: 20px; background-color: #FFF; color: #7c7c7c; /*float: left;*/ text-align: center; margin-left: 3px; margin-right: 3px; display: inline-block; }
+.page-pagination li a{display: block; width: 100%; height: 100%; line-height: 18px; border: 1px solid #dadada; color: #343434; }
+.page-pagination .active a{color: #FFF !important; background-color: #86a4ee !important; border-color: #7088c4 !important; }
+td img {display: block; width: 100px; height: 70px; margin: 0 auto; }

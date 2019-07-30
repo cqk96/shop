@@ -1,0 +1,470 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>添加片区</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=0">
+    <link rel="stylesheet" href="../../../layuiadmin/layui/css/layui.css" media="all">
+    <link rel="stylesheet" href="../../../layuiadmin/style/otherHtml.css" media="all">
+</head>
+<body>
+<div class="personal-box">
+    <!--信息-->
+    <div class="data-message layui-form" lay-filter="detailForm">
+
+        <div class="data-message-title">
+            <i class="layui-icon">❶</i>
+            <span>基础信息</span>
+            <span class="required" style="font-size: 10px;">注:' * '为必填项</span>
+        </div>
+        <div class="data-message-form layui-row layui-col-space15">
+            <div class="layui-col-md6">
+                <div class="data-item ">
+                    <label class="data-label">片区名称<span class="required">*</span></label>
+                    <input type="text" class="layui-input" name="name" id="name" placeholder="请输入名称" lay-verify="required|name">
+
+                </div>
+            </div>
+            <div class="layui-col-md6">
+                <div class="data-item">
+                    <label class="data-label">片区面积<span class="required">*</span></label>
+                    <input type="text" class="layui-input" name="acreage" id="acreage" placeholder="请输入面积,可输入两位小数,默认单位㎡" lay-verify="required|number">
+                </div>
+            </div>
+            <div class="layui-col-md6">
+                <div class="data-item">
+                    <label class="data-label">片区类型<span class="required">*</span></label>
+                    <select name="typeId" id="typeId" lay-verify="required">
+                        <option value="1">水果</option>
+                        <option value="2">蔬菜</option>
+                    </select>
+                </div>
+            </div>
+            <div class="layui-col-md6">
+                <div class="data-item">
+                    <label class="data-label">作物数量<span class="required">*</span></label>
+                    <input type="text" class="layui-input" name="cropAmount" id="cropAmount" placeholder="请输入数量" lay-verify="required">
+                </div>
+            </div>
+            <div class="layui-col-md6">
+                <div class="data-item">
+                    <label class="data-label">片区状态</label>
+                    <select name="statusId" id="statusId" lay-verify="required">
+                        <option value="0">正常</option>
+                        <option value="1">虫害</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="layui-col-md6">
+                <div class="data-item">
+                    <label class="data-label">预计成熟时间</label>
+                    <input type="text" class="layui-input select-time" name="expectedMaturity" id="expectedMaturity" placeholder="请选择时间">
+                </div>
+            </div>
+
+            <!--// 负责人-->
+            <div class="layui-col-md12">
+                <div class="data-item">
+                    <label class="data-label">管理人员<span class="required">*</span></label>
+                    <div class="manager checkout-list">
+
+                    </div>
+                </div>
+            </div>
+            <div class="layui-col-md12">
+                <div class="data-item">
+                    <label class="data-label">作物类别<span class="required">*</span></label>
+                    <div class="cropType checkout-list">
+
+                    </div>
+                </div>
+            </div>
+            <div class="layui-col-md12">
+                <div class="data-item">
+                    <label class="data-label">所属地块<span class="required">*</span></label>
+                    <div class="acre checkout-list">
+
+                    </div>
+                </div>
+            </div>
+
+            <div class="layui-col-md12">
+                <div class="data-item ">
+                    <label class="data-label">备注</label>
+                    <textarea name="remarks" id="remarks" placeholder="填写备注信息" class="layui-textarea"></textarea>
+                </div>
+            </div>
+        </div>
+
+        <div class="button-box">
+            <button  lay-submit type="button" class="layui-btn layui-btn-normal" lay-filter="formSubmit">提交</button>
+            <button type="button" class="layui-btn layui-btn-primary" onclick="javascript:history.back(-1);">返回</button>
+
+        </div>
+    </div>
+</div>
+
+
+<script src="../../../layuiadmin/layui/layui.js"></script>
+<script src="../../../layuiadmin/jQuery/jquery-1.9.1/jquery.min.js"></script>
+<script src="../../../layuiadmin/js/global.js"></script>
+<script>
+
+    var submitting = false;
+
+    layui.config({
+        base: '../../layuiadmin/' //静态资源所在路径
+    }).extend({
+        index: 'lib/index' //主入口模块
+    }).use(['form','element','laydate'] ,function () {
+        var form = layui.form;
+        username = getCookie('username');
+        accessToken = getCookie('accessToken');
+        var $pervId = getCookie('$areaId');//上个页面的id 判断新建还是编辑
+
+        var laydate = layui.laydate;
+
+        //日期
+        laydate.render({
+            elem: '.select-time'
+        });
+
+        // 获取全部负责人
+        $.ajax({
+            url : parent.layui.setter.host + '/api/v1/user/all?access_token='+accessToken+'&user_login='+username
+            ,type : 'get'
+            ,async:false
+            ,success : function (res) {
+                var lists = res.data;
+                if(res.code== '006' || res.code== '007' || res.code=='014'){
+                    parent.window.location.href="/crmFE/src/views/user/login.html";
+                }
+                for (var i = 0 ; i <= lists.length - 1; i++){
+                    var managerHtml = '<input type="checkbox" name="manager_id" title="'+lists[i].name +'" id="'+lists[i].id+'" lay-skin="primary">';
+
+                    $(".manager").append(managerHtml);
+
+                    form.render();
+                }
+            }
+            ,error : function (res) {
+
+                // console.log(res);
+            }
+        });
+
+        // 获取全部作物类别
+        $.ajax({
+            url : parent.layui.setter.host + '/api/v1/cropType/all?access_token='+accessToken+'&user_login='+username
+            ,type : 'get'
+            ,async:false
+            ,success : function (res) {
+                var lists = res.data;
+                // console.log(lists);
+                if(res.code== '006' || res.code== '007' || res.code=='014'){
+                    parent.window.location.href="/crmFE/src/views/user/login.html";
+                }
+                for (var i = 0 ; i <= lists.length - 1; i++){
+
+                    //
+                    var Html = '<input type="radio" name="cropType" title="'+lists[i].name +'" id="'+lists[i].id+'">';
+
+                    $(".cropType").append(Html);
+
+                    form.render();
+                }
+            }
+            ,error : function (res) {
+                // layer.msg('获取失败');
+                console.log(res);
+            }
+        });
+
+        // 获取全部地块
+        $.ajax({
+            url : parent.layui.setter.host + '/api/v1/acre/all?access_token='+accessToken+'&user_login='+username
+            ,type : 'get'
+            ,async:false
+            ,success : function (res) {
+                var lists = res.data;
+                // console.log(lists);
+                if(res.code== '006' || res.code== '007' || res.code=='014'){
+                    parent.window.location.href="/crmFE/src/views/user/login.html";
+                }
+                for (var i = 0 ; i <= lists.length - 1; i++){
+
+                    //
+                    var Html = '<input type="radio" name="acre" title="'+lists[i].name +'" id="'+lists[i].id+'" lay-skin="primary">';
+
+                    $(".acre").append(Html);
+
+                    form.render();
+                }
+            }
+            ,error : function (res) {
+
+                layer.msg('获取失败');
+                console.log(res);
+            }
+        });
+
+        if ( $pervId > 0){
+            //获取片区详情
+            $.ajax({
+                url : parent.layui.setter.host + '/api/v1/area/read'
+                ,type : 'get'
+                ,data : {
+                    "access_token": accessToken
+                    ,"user_login": username
+                    ,"id" : $pervId
+                }
+                ,success : function (res) {
+                    var formStr = res.data;
+
+                    console.log(formStr);
+                    if(res.code== '006' || res.code== '007' || res.code=='014'){
+                        parent.window.location.href="/crmFE/src/views/user/login.html";
+                    }
+
+                    form.val("detailForm", {
+                        "acreage": formStr.acreage
+                        ,"name": formStr.name
+                        ,"cropAmount": formStr.crop_amount
+                        ,"expectedMaturity":UnixToDate(formStr.expected_maturity)
+                        ,"remarks":formStr.remarks
+                        ,"typeId":formStr.type_id
+                    });
+
+                    // 负责人
+                    var allInput =  $(".manager input"); // 获取页面显示的全部的部门
+
+                    for (var j = 0; j <= allInput.length - 1; j++){
+
+                        var allId = allInput[j].id;  // 拿到页面中 全部的id
+                        var allSelect = formStr.managers; // 获取该账号的选中的信息
+
+                        for (var i = 0; i <= allSelect.length -1; i++){
+                            if (allId == allSelect[i]) {
+                                $('.manager').find('#'+allId+'').prop("checked", true);
+                            }
+                        }
+
+                    }
+
+                    //所属地块
+                    var allAcreInput =  $(".acre input"); // 获取页面显示的全部信息
+
+                    for (var j = 0; j <= allAcreInput.length - 1; j++){
+
+                        var allId = allAcreInput[j].id;  // 拿到页面中 全部的id
+                        var allSelect = formStr.acre_id; // 获取该账号的选中的信息
+
+
+                            if (allId == allSelect) {
+                                $('.acre').find('#'+allId+'').prop("checked", true);
+                            }
+
+
+
+                    }
+
+                    //作物类别
+                    var allCropInput =  $(".cropType input"); // 获取页面显示的全部的部门
+
+                    for (var j = 0; j <= allCropInput.length - 1; j++){
+
+                        var allId = allCropInput[j].id;  // 拿到页面中 全部的id
+                        var allSelect = formStr.crop_type_id; // 获取该账号的选中的信息
+
+                        if (allId == allSelect) {
+                            $('.cropType').find('#'+allId+'').prop("checked", true);
+                        }
+
+                    }
+
+                    form.render();
+
+                }
+                ,error : function (res) {
+                    console.log(res);
+                }
+            });
+
+            // 提交修改
+            form.on('submit(formSubmit)', function (data) {
+
+                if (submitting) {
+                    layer.msg("数据正在传输,请勿重复点击");
+                    return false;
+                }
+                submitting = true;
+                var formData = data.field;
+
+                // 负责人
+                var managerIdArr = [];
+                $("input:checked[name='manager_id']:checked").each(function() {
+                    var ids = '';
+                    ids +=  $(this).attr("id");
+
+                    managerIdArr.push(ids);
+                    return managerIdArr;
+                });
+                if (managerIdArr == ''){
+                    layer.msg('请勾选负责人后再提交');
+                    submitting = false;
+                    return;
+                }
+                managerIdArr = managerIdArr.join(',');
+
+                // 作物类别
+                var cropTypeIdArr = [];
+                $("input:radio[name='cropType']:checked").each(function() {
+                    var ids = '';
+                    ids +=  $(this).attr("id");
+
+                    cropTypeIdArr.push(ids);
+                    return cropTypeIdArr;
+                });
+                if (cropTypeIdArr == ''){
+                    layer.msg('请勾选作物类别后再提交');
+                    submitting = false;
+                    return;
+                }
+                cropTypeIdArr = cropTypeIdArr.join(',');
+                // 所属地块
+                var acreIdArr = [];
+                $("input:radio[name='acre']:checked").each(function() {
+                    var ids = '';
+                    ids +=  $(this).attr("id");
+                    acreIdArr.push(ids);
+                    return acreIdArr;
+                });
+                if (acreIdArr == ''){
+                    layer.msg('请勾选作物类别后再提交');
+                    submitting = false;
+                    return;
+                }
+                acreIdArr = acreIdArr.join(',');
+
+                formData['managerIds'] = managerIdArr ;
+                formData['cropTypeId'] = cropTypeIdArr;
+                formData['acreId'] = acreIdArr ;
+                formData['access_token'] = accessToken ;
+                formData['user_login'] = username ;
+
+                formData['id'] = $pervId ;
+                for (var i in formData){
+                    delete formData.manager_id;
+                }
+
+
+                $.ajax({
+                    url: parent.layui.setter.host +'/api/v1/area/update'
+                    ,type : 'post'
+                    ,data : formData
+                    ,success : function (res) {
+                        if(res.status.code !== '001'){
+                            layer.msg(res.status.message);
+                            submitting = false;
+                            return;
+                        }
+                        layer.msg(res.status.message+',正在跳转');
+                        backHistory();
+                    }
+                    ,error : function () {
+                        layer.msg('修改失败');
+                    }
+                });
+            });
+        }else{
+            // 新增页面
+            form.on('submit(formSubmit)', function (data) {
+
+                if (submitting) {
+                    layer.msg("数据正在传输,请勿重复点击");
+                    return false;
+                }
+                submitting = true;
+                var formData = data.field;
+                // 负责人
+                var managerIdArr = [];
+                $("input:checked[name='manager_id']:checked").each(function() {
+                    var ids = '';
+                    ids +=  $(this).attr("id");
+
+                    managerIdArr.push(ids);
+                    return managerIdArr;
+                });
+                if (managerIdArr == ''){
+                    layer.msg('请勾选管理人员后再提交');
+                    submitting = false;
+                    return;
+                }
+                managerIdArr = managerIdArr.join(',');
+
+                // 作物类别
+                var cropTypeIdArr = [];
+                $("input:radio[name='cropType']:checked").each(function() {
+                    var ids = '';
+                    ids +=  $(this).attr("id");
+
+                    cropTypeIdArr.push(ids);
+                    return cropTypeIdArr;
+                });
+                if (cropTypeIdArr == ''){
+                    layer.msg('请勾选作物类别后再提交');
+                    submitting = false;
+                    return;
+                }
+                cropTypeIdArr = cropTypeIdArr.join(',');
+                // 所属地块
+                var acreIdArr = [];
+                $("input:radio[name='acre']:checked").each(function() {
+                    var ids = '';
+                    ids +=  $(this).attr("id");
+                    acreIdArr.push(ids);
+                    return acreIdArr;
+                });
+                if (acreIdArr == ''){
+                    layer.msg('请勾选所属地块后再提交');
+                    submitting = false;
+                    return;
+                }
+                acreIdArr = acreIdArr.join(',');
+
+                formData['managerIds'] = managerIdArr ;
+                formData['cropTypeId'] = cropTypeIdArr ;
+                formData['acreId'] = acreIdArr ;
+                formData['access_token'] = accessToken ;
+                formData['user_login'] = username ;
+                $.ajax({
+                    url: parent.layui.setter.host + '/api/v1/area/create'
+                    ,type : 'post'
+                    ,data : formData
+                    ,success : function (res) {
+                        if(res.status.code !== '001'){
+                            layer.msg(res.status.message);
+                            submitting = false;
+                            return;
+                        }
+                        layer.msg(res.status.message+',正在跳转');
+                        backHistory();
+                    }
+                    ,error : function () {
+                        layer.msg('添加失败');
+                    }
+                });
+            });
+
+        }
+
+    });
+
+
+</script>
+</body>
+</html>

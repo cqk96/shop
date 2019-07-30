@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>添加新闻</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=0">
+    <link rel="stylesheet" href="../../../layuiadmin/layui/css/layui.css" media="all">
+    <link rel="stylesheet" href="../../../layuiadmin/style/otherHtml.css" media="all">
+    <script src="../../../layuiadmin/utf8-php/ueditor.config.js"></script>
+
+</head>
+<body>
+<div class="personal-box">
+    <!--信息-->
+    <div class="data-message layui-form" lay-filter="detailForm">
+
+        <div class="data-message-form layui-row layui-col-space15">
+            <div class="layui-col-md12" style="text-align: center;">
+                <div class="cover-box">
+                    <i class="layui-icon layui-icon-picture null-img-icon"></i>
+                </div>
+                <button type="button" class="layui-btn layui-btn-primary layui-btn-sm" id="cover">点击上传封面<span class="required">*</span></button>
+            </div>
+        </div>
+
+        <div class="data-message-title">
+            <i class="layui-icon">❶</i>
+            <span>基础信息</span>
+            <span class="required" style="font-size: 10px;">注:' * '为必填项</span>
+        </div>
+        <div class="data-message-form layui-row layui-col-space15">
+            <div class="layui-col-md6">
+                <div class="data-item ">
+                    <label class="data-label">文章标题<span class="required">*</span></label>
+                    <input type="text" class="layui-input" name="title" id="title" placeholder="请输入标题名称" lay-verify="required">
+
+                </div>
+            </div>
+            <!-- 选择分类-->
+            <div class="layui-col-md12">
+                <div class="data-item">
+                    <label class="data-label">选择分类<span class="required">*</span></label>
+                    <div class="news-class checkout-list">
+
+                    </div>
+                </div>
+            </div>
+
+            <!--<div class="layui-col-md12">-->
+                <!--<div class="data-item">-->
+                    <!--<label class="data-label">标签</label>-->
+                    <!--<ul class="data-item-label">-->
+                        <!--<li><img src="../../../images/biaoqian.png" alt=""><span>标签</span></li>-->
+                        <!--<li><img src="../../../images/biaoqian.png" alt=""><span>标签1</span></li>-->
+                        <!--<li><img src="../../../images/biaoqian.png" alt=""><span>标签2</span></li>-->
+                        <!--<li><img src="../../../images/biaoqian.png" alt=""><span>标签3</span></li>-->
+                    <!--</ul>-->
+                <!--</div>-->
+            <!--</div>-->
+            <!--<div class="layui-col-md6">-->
+                <!--<div class="data-item ">-->
+                    <!--<label class="data-label">是否审核</label>-->
+                    <!--<select name="pass" id="pass">-->
+                        <!--<option value="0">否</option>-->
+                        <!--<option value="1">是</option>-->
+                    <!--</select>-->
+                <!--</div>-->
+            <!--</div>-->
+            <!--<div class="layui-col-md6">-->
+                <!--<div class="data-item ">-->
+                    <!--<label class="data-label">是否置顶</label>-->
+                    <!--<select name="top" id="top">-->
+                        <!--<option value="0">否</option>-->
+                        <!--<option value="1">是</option>-->
+
+                    <!--</select>-->
+                <!--</div>-->
+            <!--</div>-->
+        </div>
+
+        <div class="data-message-title">
+            <i class="layui-icon">❷</i>
+            <span>文章内容<span class="required">*</span></span>
+        </div>
+        <div class="data-message-form layui-row layui-col-space15">
+            <div class="layui-col-md12">
+                <div class="data-item">
+                    <div id="editor" name="content"  style="height: 300px;"></div>
+                </div>
+            </div>
+        </div>
+        <div class="button-box">
+            <button  lay-submit type="button" class="layui-btn layui-btn-normal" lay-filter="formSubmit">提交</button>
+            <button type="button" class="layui-btn layui-btn-primary" onclick="javascript:history.back(-1);">返回</button>
+
+        </div>
+    </div>
+</div>
+
+
+<script src="../../../layuiadmin/layui/layui.js"></script>
+<script src="../../../layuiadmin/jQuery/jquery-1.9.1/jquery.min.js"></script>
+<script src="../../../layuiadmin/js/global.js"></script>
+<!--编辑器-->
+<script type="text/javascript" src="../../../layuiadmin/utf8-php/ueditor.config.js"></script>
+<script type="text/javascript" src="../../../layuiadmin/utf8-php/ueditor.all.js"></script>
+<script type="text/javascript" src="../../../layuiadmin/utf8-php/lang/zh-cn/zh-cn.js"></script>
+<script type="text/javascript">
+    var submitting = false;
+
+    layui.config({
+        base: '../../layuiadmin/' //静态资源所在路径
+    }).extend({
+        index: 'lib/index' //主入口模块
+    }).use(['form','element','laydate','upload'] ,function () {
+        var form = layui.form;
+        username = getCookie('username');
+        accessToken = getCookie('accessToken');
+        var $pervId = getCookie('$farmId');//上个页面的id 判断新建还是编辑
+
+        var upload = layui.upload;
+        var imgUrl;
+        var ue = UE.getEditor('editor'); // 编辑器初始化
+
+        var $pervId = getCookie('$newsId');
+        // 获取文章分类列表
+        $.ajax({
+            url : parent.layui.setter.host + '/api/v1/NewsClass/allList?access_token='+accessToken+'&user_login='+username
+            ,type : 'get'
+            ,success : function (res) {
+                var lists = res.data;
+                if(res.code== '006' || res.code== '007' || res.code=='014'){
+                    parent.window.location.href="/crmFE/src/views/user/login.html";
+                }
+                for (var i = 0 ; i <= lists.length - 1; i++){
+                    var html = '<input type="radio" name="class_id" title="'+lists[i].class_name +'" id="'+lists[i].id+'">';
+
+                    $(".news-class").append(html);
+
+                    form.render();
+                }
+            }
+            ,error : function (res) {
+                console.log(res);
+            }
+        });
+
+        if ( $pervId > 0){
+
+
+            //获取农场详情
+            $.ajax({
+                url : parent.layui.setter.host + '/api/v1/news/detail'
+                ,type : 'get'
+                ,data : {
+                    "access_token": accessToken
+                    ,"user_login": username
+                    ,"id" : $pervId
+                }
+                ,success : function (res) {
+                    var formStr = res.data;
+
+                    console.log(res);
+                    if(res.code== '006' || res.code== '007' || res.code=='014'){
+                        parent.window.location.href="/crmFE/src/views/user/login.html";
+                    }
+
+                    form.val("detailForm", {
+                        "title": formStr.title
+                    });
+
+                    // 封面
+                    var coverHtml = '<img style="cursor: pointer;" title="点击查看大图" src="'+parent.layui.setter.host+formStr.cover+'" alt="">';
+
+                    $(".cover-box").html('');
+                    $(".cover-box").append(coverHtml);
+
+
+                    // 点击查看大图
+                    layer.photos({
+                        photos: '.cover-box'
+                        ,anim: 5 //0-6的选择，指定弹出图片动画类型，默认随机（请注意，3.0之前的版本用shift参数）
+                    });
+
+                    // 分类
+                    var allInput =  $(".news-class input"); // 获取页面显示的全部的input
+
+                    for (var j = 0; j <= allInput.length - 1; j++){
+
+                        var allId = allInput[j].id;  // 拿到页面中 全部的id
+                        var allSelect = formStr.class_id; // 获取该账号的选中的信息
+
+                        if (allId == allSelect) {
+                            $('.news-class').find('#'+allId+'').prop("checked", true);
+                        }
+
+                    }
+                    form.render();
+
+                    // 编辑器
+                    UE.getEditor('editor').setContent(formStr.content, true)
+
+                }
+                ,error : function (res) {
+                    console.log(res);
+                }
+            });
+
+            // 上传文章封面
+            upload.render({
+                elem: '#cover' //绑定元素
+                ,url: parent.layui.setter.host + '/api/v1/tools/uploadImage' //上传接口
+                ,size : 1024
+                ,done: function(res){
+                    console.log(res);
+                    $(".cover-box").html('');
+                    var img = res.data;
+                    var html = '<img src="'+parent.layui.setter.host+img[0].url+'" alt="">';
+                    $(".cover-box").append(html);
+
+                    imgUrl = img[0].url;
+                }
+                ,error: function(){
+                    //请求异常回调
+                }
+            });
+
+            //监听修改
+            form.on('submit(formSubmit)', function (data) {
+
+                if (submitting) {
+                    layer.msg("数据正在传输,请勿重复点击");
+                    return false;
+                }
+                submitting = true;
+
+
+                var formData = data.field;
+
+
+                // 文章分类
+                var idArr = [];
+                $("input:radio[name='class_id']:checked").each(function() {
+                    var Id = '';
+                    Id +=  $(this).attr("id");
+
+                    idArr.push(Id);
+                    return idArr;
+                });
+
+                idArr = idArr.join(',');
+
+                var newContent = UE.getEditor('editor').getContent();
+
+                formData['class_id'] = idArr ;
+                formData['id'] = $pervId;
+                formData['access_token'] = accessToken ;
+                formData['user_login'] = username ;
+                formData['cover'] = imgUrl ;
+                formData['content'] = newContent ;
+
+
+                $.ajax({
+                    url: parent.layui.setter.host + '/api/v1/news/update'
+                    ,type : 'post'
+                    ,data : formData
+                    ,success : function (res) {
+                        if(res.status.code !== '001'){
+                            layer.msg('请填写必填项');
+                            submitting = false;
+                            return;
+                        }
+                        layer.msg(res.status.message+',正在跳转');
+                        backHistory();
+                    }
+                    ,error : function () {
+                        layer.msg('修改失败');
+                    }
+                });
+            });
+        }else{
+            // 新增页面
+            // 上传文章封面
+            upload.render({
+                elem: '#cover' //绑定元素
+                ,url: parent.layui.setter.host + '/api/v1/tools/uploadImage' //上传接口
+                ,size : 1024
+                ,done: function(res){
+                    console.log(res);
+                    $(".cover-box").html('');
+                    var img = res.data;
+                    var html = '<img style="cursor: pointer;" title="点击查看大图" src="'+parent.layui.setter.host+img[0].url+'" alt="">';
+                    $(".cover-box").append(html);
+
+                    imgUrl = img[0].url;
+
+                    layer.photos({
+                        photos: '.cover-box'
+                        ,anim: 5 //0-6的选择，指定弹出图片动画类型，默认随机（请注意，3.0之前的版本用shift参数）
+                    });
+
+                }
+                ,error: function(){
+                    //请求异常回调
+                }
+            });
+
+            //监听提交
+            form.on('submit(formSubmit)', function (data) {
+
+                if (submitting) {
+                    layer.msg("数据正在传输,请勿重复点击");
+                    return false;
+                }
+                submitting = true;
+
+
+                var formData = data.field;
+
+
+                // 文章分类
+                var idArr = [];
+                $("input:radio[name='class_id']:checked").each(function() {
+                    var Id = '';
+                    Id +=  $(this).attr("id");
+
+                    idArr.push(Id);
+                    return idArr;
+                });
+
+                idArr = idArr.join(',');
+
+                var newContent = UE.getEditor('editor').getContent();
+
+                formData['class_id'] = idArr ;
+                formData['access_token'] = accessToken ;
+                formData['user_login'] = username ;
+                formData['cover'] = imgUrl ;
+                formData['content'] = newContent ;
+
+
+                $.ajax({
+                    url: parent.layui.setter.host + '/api/v1/news/create'
+                    ,type : 'post'
+                    ,data : formData
+                    ,success : function (res) {
+                        if(res.status.code !== '001'){
+                            layer.msg('请填写必填项');
+                            submitting = false;
+                            return;
+                        }
+                        layer.msg(res.status.message+',正在跳转');
+                        backHistory();
+                    }
+                    ,error : function () {
+                        layer.msg('添加失败');
+                    }
+                });
+            });
+
+        }
+
+
+    });
+
+</script>
+</body>
+</html>

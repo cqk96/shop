@@ -1,0 +1,41 @@
+.main-content{height:100%;}
+.main-container{height:100%;}
+.search-icon{font-size: 17pt;margin-left:5px;}
+.search-input .input-sm{width:80%!important;float:left;}
+.smart-widget{background: white;}
+.main-container.sidebar-mini{margin-left: 60px!important;}
+.page-pagination li{list-style-type: none;}
+.deleteChooseBtn {/*margin-bottom: 20px;*/}
+a.allCheckBox {/*float: right*/;margin-right: 27px;/*margin-bottom: 20px;*/}
+.searchForm input {color: black;}
+
+/*分页样式*/
+.page-pagination {
+	float: right;
+	margin-right: 27px;
+	/*margin-top: 10px;*/
+	/*margin-bottom: 10px;*/
+}
+.page-pagination li {
+	min-width: 20px;
+	height: 20px;
+	background-color: #FFF;
+	color: #7c7c7c;
+	float: left;
+	text-align: center;
+	margin-left: 3px;
+	margin-right: 3px;
+}
+.page-pagination li a{
+	display: block;
+	width: 100%;
+	height: 100%;
+	line-height: 18px;
+	border: 1px solid #dadada;
+	color: #343434;
+}
+.page-pagination .active a{
+	color: #FFF !important;
+	background-color: #86a4ee !important;
+	border-color: #7088c4 !important;
+}

@@ -1,0 +1,162 @@
+html,body,span,div,p{
+		padding: 0px;
+		margin: 0px;
+	}
+	html, body {
+		width: 100%;
+		height: 100%;
+	}
+	body {
+		background-color: #f5f5f5;
+	}
+	.nosee {
+		display: none;
+	}
+	a {
+		text-decoration: none;
+	}
+
+	/*缺省*/
+	.rest-div-20 {
+		width: 100%;
+		height: 0.2rem;
+	}
+
+	/*订单详情*/
+	.order-detail-box {
+		width: 100%;
+		height: 2.5rem;
+		background-color: #FFF;
+	}
+	.pro-img-box {
+		width: 1.6rem;
+		height: 1.6rem;
+		display: inline-block;
+		float: left;
+		margin: 0.45rem 0.2rem 0px 0.3rem;
+		position: relative;
+	}
+	.pro-img-box img {
+		display: block;
+		width: 100%;
+		height: 100%;
+	}
+	.pro-title-box {
+		width: 100%;
+		height: 0.4rem;
+		font-size: 0.3rem;
+		text-align: center;
+		line-height: 0.4rem;
+		background-color: rgb(0,0,0);		
+		color: #FFF;
+		position: absolute;
+		bottom: 0px;
+		left: 0px;
+	}
+	.item-title {
+		font-size: 0.32rem;
+		color: #b4b4b4;
+		margin-top: 0.06rem;
+	}
+	.status-color {
+		color: #79bd22 !important;
+	}
+	.express-box {
+		width: 100%;
+		height: 6.6rem;
+		overflow-y: scroll;
+		background-color: #FFF;
+	}
+	.each-express-box {
+		width: 80%;
+		margin-left: 12%;
+		position: relative;
+		background-color: #FFF;
+		min-height: 1.3rem;
+		display: inline-block;
+	}
+	.each-express-box-2 {
+		width: 80%;
+		margin-left: 12%;
+		position: relative;
+		background-color: #FFF;
+	}
+	.no-end {
+		height: 0.20rem !important;
+
+	}
+	.line-box {
+		height: 100%;
+		width: 0.2rem;
+		position: absolute;
+		top: 0px;
+		left: 0.1rem;
+		background-color: #d9d9d9;
+	}
+	.first-line {
+		border-top-left-radius: 0.1rem;  
+		border-top-right-radius: 0.1rem;
+	}
+	.ball-box {
+		width: 0.4rem;
+		height: 0.4rem;
+		background-color: #d9d9d9;
+		border-radius: 100%;
+		position: absolute;
+		top: -0.04rem;
+		left: 0px;
+	}
+
+	/*文本*/
+	.express-title-box {
+		padding-left: 0.7rem;
+		font-size: 0.24rem;
+		margin-top: 0.05rem;
+		margin-bottom: 0.15rem;
+		color: #999999;
+	}
+	/*时间*/
+	.time-box {
+		color: #999999;
+		font-size: 0.2rem;
+		padding-left: 0.6rem;
+	}
+
+	/*底部bar*/
+	.bottom-bar-box {
+		width: 100%;
+		height: 1.1rem;
+		position: fixed;
+		bottom: 0px;
+		background-color: #FFF;
+		z-index: 99;
+	}
+	.right-bottom-bar {
+		width: 67%;
+		height: 100%;
+		float: right;	
+		position: relative;
+	}
+	.returnBtnBox {
+		width: 2rem;
+		height: 0.6rem;
+		line-height: 0.6rem;
+		background-color: #79bd22;
+		position: absolute;
+		font-size: 0.24rem;
+		top: 0.3rem;
+		right: 0.2rem;
+		text-align: center;
+		color: #FFF;
+		border-radius: 0.15rem;
+	}
+	.ball-on {
+		background-color: #79bd22;
+		box-shadow: 0px 0px 0.05rem gray;
+	}
+	.first-p {
+		padding-top: 0.4rem;
+	}
+	.item-value {
+		margin-left: 0.1rem;
+	}

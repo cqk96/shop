@@ -1,0 +1,466 @@
+<html>
+<head>
+	<title>后台管理员登录</title>
+	<link rel="stylesheet" type="text/css" href="/js/tools/layer/skin/default/layer.css">
+	<style type="text/css">
+	@font-face { 
+	  font-family: Soopafresh; 
+	  src: url('/font/Soopafresh.ttf');
+	  src: url('/font/soopafresh-webfont.eot')  format('embedded-opentype'); 
+	} 
+ 	html,body {width: 100%; height: 100%;font-family: Soopafresh;}
+ 	body {overflow-y: hidden;}
+ 	html,body,div,img{padding: 0px; margin: 0px;}
+ 	body {background-color: #f5f4f4;}
+
+	.login-Box {width: 700px; height: 390px; position: absolute; box-shadow: 0 0 11px #cfcfcf; }
+	.nosee {display: none;}
+	.container {width: 100%; height: 100%;}
+
+	.remind-message-box { width: 200px;height: 100%;display: inline-block;background: #000000; position: absolute; z-index: 3; top: 0px; right: 0px; }
+	.login-form-box {width: 500px; height: 100%; background-color: #FFF; /*float: left;*/ z-index: 3; position: absolute; top: 0px; left: 0px;}
+
+	.login-form {width: 40%; height: 250px; margin: 70px auto; position: relative; }
+	.login-title { font-size: 20px; text-align: center; margin-bottom: 6px; }
+
+	.login-small-title { margin-top: 20px; font-size: 10px; color: #d2d2d2; text-align: center; }
+	.login-forget-pwd-small-title { margin-top: 6px; font-size: 8px; color: #d2d2d2; text-align: center; }
+	.login-forget-pwd-small-title:hover { cursor: pointer; }
+
+	.login-input { width: 90%; text-align: center; padding-top: 5px; padding-bottom: 5px; border: none; border-bottom: 2px solid #ededed; margin-left: auto; margin-right: auto; display: block; }
+
+	.signin-btn { width: 90%; height: 22px; line-height: 22px; text-align: center; border-radius: 10px; background-color: #ffb45c; font-size: 13px; color: #FFF; margin-top: 15px; margin-left: auto; margin-right: auto; }
+    .signin-btn:hover {cursor: pointer; }
+
+    .remind-title {font-size: 20px; color: #FFF; text-align: center; margin-top: 74px; }
+
+    .bg-color-hidden-box {position: absolute; top: 0px; left: 0px; width: 100%; height: 100%; z-index: 2; background-color: #FFF; }
+
+    .remind-desc { width: 90%; height: 157px; overflow: hidden; color: #b2afaf; font-size: 9px; margin: 13px auto 0px auto; text-align: center;}
+
+    .signup-btn {
+    	text-align: center; color: #FFF; border: 1px solid #FFF; width: 47%; font-size: 10px; height: 22px; line-height: 22px; border-radius: 25px; margin: 0 auto; }
+
+    .signup-btn:hover {cursor: pointer;}
+
+    #remindBgCanvas {position: absolute; top: 0px; left: 0px; z-index: 2; opacity: 0.4; }
+    .remind-content {position: relative; z-index: 3;}
+
+    .error-input { border: 1px solid red; }
+	</style>
+</head>
+<body>
+	<div id="container">
+		<div id="loginBox" class="login-Box nosee">
+			
+			<!-- <div class="bg-img-box nosee"><img class='bg-img' id="bgImg" src="8616cc3607f0f3f0b7efa8e27478e050.jpg"></div> -->
+
+			<img class="nosee" id="bgImg" src="/images/starry-sky.jpg">
+
+			<div class="bg-color-hidden-box"></div>
+
+			<div class="login-form-box">
+				<div class="login-form">
+					<div class="login-title">Welcome Back,</div>
+
+					<div class="login-small-title">User Name</div>
+					<input id="userLogin" class="login-input" type="text" name="" placeholder="Input User Name">
+
+					<div class="login-small-title">Password</div>
+					<input class="login-input" id="userPassword" type="password" name="" placeholder="Input User Password">
+
+					<div class="login-forget-pwd-small-title" id="forgetPwd" >Forget Password?</div>
+
+					<!-- login -->
+					<div class="signin-btn" id="loginBtn">Login</div>
+
+				</div>
+			</div>
+
+			<div class="remind-message-box">
+
+				<canvas id="remindBgCanvas" width="200" height="390"></canvas>
+
+				<div class="remind-content">
+					<div class="remind-title">New Here ?</div>
+
+					<div class="remind-desc">Do You Want To Join Us And See The Sign Up Animate, Please Click The Button</div>
+
+					<div class="signup-btn">Sign Up</div>
+				</div>
+			</div>
+
+		</div>
+	</div>
+</body>
+</html>
+<script type="text/javascript" src="/js/jquery.min.js"></script>
+<script type="text/javascript" src="/js/tools/layer/layer.js"></script>
+<script type="text/javascript">
+
+<!-- 提示信息 -->
+function autoMessageNotice(content)
+{
+	var time =  arguments[1] ? arguments[1] : 2000;//设置参数b的默认值为2 
+	layer.open({
+		id: 1,
+	    content: content,
+	    skin: 'msg',
+	    time: time //2m秒后自动关闭
+	});
+}
+
+// 进行震动动画
+function doAnimate()
+{
+	
+	if(moveArr.length!=0) {
+
+		// 先快后慢
+		if(animateArrLength==moveArr.length){
+			// 第一次
+			var speedUp = 800;
+		} else {
+			var speedUp = 100*(animateArrLength-moveArr.length);
+		}
+
+		var singleTonMove = moveArr.shift();
+		var upLength = singleTonMove['moveUp'];
+		var downLength = singleTonMove['moveDown'];
+
+		var speedDown = 100*(animateArrLength-moveArr.length);
+
+		// 上升
+		$('.login-Box').animate({
+			"top": upLength
+		}, speedUp, "linear", function(){
+			
+			// 下降
+			$('.login-Box').animate({
+				"top": downLength
+			}, speedDown, "linear", function(){
+				// 继续下一个
+				doAnimate();
+			});
+
+		});
+
+	}
+
+}
+
+// canvas变化背景
+function doCanvasBg(movex, movey)
+{
+	var remindBgCanvasObj = document.getElementById('remindBgCanvas');
+	if(remindBgCanvasObj.getContext){
+		var environment = remindBgCanvasObj.getContext("2d");
+		var imgObj = document.getElementById('bgImg');
+		environment.drawImage(imgObj, movex, movey);
+	}
+}
+
+// 错误输入框的动画
+function doErrorInputAnimate(id)
+{
+	
+	var curWidth = $("#"+id).width();
+	var parentWidth = $("#"+id).parent().width();
+
+	$("#"+id).addClass("error-input");
+	if(parentWidth>curWidth) {
+		
+		var moveLength = parentWidth-curWidth;
+
+		errorInputAnimate(id, 0, moveLength);
+
+	}
+
+}
+
+// 移动
+function errorInputAnimate(id, i, length)
+{
+	
+	if(i<=length/2) {
+		var moveLeft = i;
+		var moveRight = length-i;
+		$("#"+id).stop().animate({
+			"marginLeft": moveLeft
+		}, 100, "linear", function(){
+			$(this).animate({
+				"marginLeft": moveRight
+			}, 100, "linear", function(){
+				var j = i+2;
+				errorInputAnimate(id, j, length)
+			});
+		});
+	}
+
+}
+
+// 文本输入动画
+function doInputAnimate(str)
+{
+	
+	// 在输入框前的所有高度
+	var beforeAccountLoginHeight = parseInt($('.login-title').css("height"))+parseInt($('.login-title').css("marginBottom"))+parseInt($('.login-small-title').css("height"))+parseInt($('.login-small-title').css("marginTop"));
+
+	// 输入框宽度
+	var inputBoxWidth = $("#userLogin").width();
+
+	// 输入框高度
+	var inputBoxHeight = parseInt($("#userLogin").css("height"));
+
+	// 起始位置随机数
+	var positionRandom = Math.random();
+
+	// 设置默认最大字体
+	var setDefaultMaxFontSize = 32;
+
+	// 设置默认最大字体
+	var setDefaultMaxMinSize = 8;
+
+	// 计算随机字体大小
+	var fontSize = Math.floor(setDefaultMaxFontSize*positionRandom)<setDefaultMaxMinSize ? setDefaultMaxMinSize:Math.floor(setDefaultMaxFontSize*positionRandom);
+
+	// 左偏移位置计算
+	var fontLeft = Math.floor(positionRandom*inputBoxWidth)+fontSize>inputBoxWidth? Math.floor(positionRandom*inputBoxWidth)-fontSize:Math.floor(positionRandom*inputBoxWidth);
+
+	// 顶偏移计算
+	var fontTop = Math.floor(positionRandom*inputBoxHeight+beforeAccountLoginHeight);
+
+	// 字符串文本
+	var content = "<span class='active-span' style='position: absolute; font-size: "+fontSize+"px; top: "+fontTop+"px; left: "+fontLeft+"px; '>"+str+"</span>";
+
+	// 加入
+	$('.login-form').append(content);
+
+	// 计算动画后的偏移
+
+	// 起始位置随机数
+	var afterPositionRandom = Math.random();
+
+	// 动画后left
+	var finalFontLeft =  Math.floor(afterPositionRandom*inputBoxWidth)+fontSize>inputBoxWidth? Math.floor(afterPositionRandom*inputBoxWidth)-fontSize:Math.floor(afterPositionRandom*inputBoxWidth);
+
+	// 动画后top
+	var finalFontTop = Math.floor(beforeAccountLoginHeight*afterPositionRandom);
+
+	$(".active-span").animate({
+		"top": finalFontTop,
+		"left": finalFontLeft,
+		"opacity": 0
+	}, 1000, function(){
+		$(this).remove();
+	});
+
+
+}	
+
+$(document).ready(function(){
+
+	userAgent = navigator.userAgent;
+
+	// 监听输入
+	document.getElementById('userLogin').addEventListener("keypress", function(event){
+
+		// 文本输入动画
+		doInputAnimate(event.key);
+
+	});
+
+	// canvas背景
+	doCanvasBg(200-700, 0);
+
+	// 是否是ie系列
+	if(userAgent.indexOf("MSIE")>0){
+		var format = /.*?MSIE (.*?);/;
+		var ieVersion = userAgent.match(format)[1];
+		ieVersion = parseInt(ieVersion);
+		if(ieVersion<10) {
+			// 低版本ie
+			$("input[type='text']").each(function(){
+				var curPlaceholder = $(this).attr("placeholder");
+				$(this).val(curPlaceholder);
+			});
+
+		}
+	}
+
+	// 抖动长度
+	jitterLength = 20;
+
+	// 抖动范围
+	jitterRange = 5;
+
+	// 屏幕宽度
+	screenWidth = $(window).width();
+
+	// 屏幕高度
+	screenHeight = $(window).height();
+
+	// 登录的盒子宽度
+	loginBoxWidth = $('#loginBox').width();
+
+	// 登录的盒子高度
+	loginBoxHeight = $('#loginBox').height();
+	
+	// 计算容器左偏移
+	loginBoxLeft = (screenWidth-loginBoxWidth)/2;
+
+	// 计算容器顶部偏移
+	loginBoxTop = (screenHeight-loginBoxHeight)/2;
+
+	// 容器最早顶部位置
+	loginBoxInitTop = screenHeight;
+
+	// 记录数组原始长度
+	animateArrLength = 0;
+
+	moveArr = new Array();
+
+	// 设定容器的位置初始化
+	$('.login-Box').css({
+		"top": loginBoxInitTop,
+		"left": loginBoxLeft
+	});
+
+	// 显示容器
+	$('.login-Box').removeClass("nosee");
+
+	// 容器动画
+	// 执行抖动动画
+	for(i=jitterLength; i>=1; i=i-jitterRange) {
+
+		animateArrLength++;
+
+		var j=i;
+		var moveUp = loginBoxTop-j;
+		var moveDown = loginBoxTop+j;
+
+		var moveObj = new Object();
+		moveObj['moveUp'] = moveUp;
+		moveObj['moveDown'] = moveDown;
+		moveArr.push(moveObj);
+	}
+
+	doAnimate();
+
+	$('.signup-btn').click(function(){
+		
+		// 判断是否仍然在动画
+		var isAnimate = $('.login-Box').is(":animated");
+		if(isAnimate){
+			return false;
+		}
+
+		// 动画
+		$('.remind-message-box').animate({
+			"right": 500
+		},{
+			duration: 1000,
+			easing: "linear",
+			done: function(){
+				window.location.href = "/signup";
+			},
+			step: function(stepLength){
+				doCanvasBg(200-700+stepLength, 0);
+			}
+		});
+
+		$('.login-form-box').animate({
+			"left": 200
+		}, 1000, "linear");
+
+	});
+
+	// 忘记密码
+	$("#forgetPwd").click(function(){
+
+		layer.confirm('确定请求管理员重置密码吗?', {
+			id: 2,
+			icon: 3, 
+			title:'提示'
+		}, function(index){
+
+			// 用户名
+			var userLogin = $("#userLogin").val();
+      		if(userLogin==""){
+      			autoMessageNotice("请填写账号");
+      			return false; 
+      		}
+
+      		$.ajax({
+		        url: "/api/v1/message/forgetPwdNotice",
+		        type: "POST",
+		        dataType: "JSON",
+		        data: {
+		          userId: 1,
+		          content: userLogin+"账号请求管理员辅助重置密码"
+		        },
+		        success: function(response){
+		          	if(response['status']['success']){
+		            	autoMessageNotice("已发送, 请等待");
+		          	} else {
+		          		autoMessageNotice(response['status']['message']);
+		          	}
+		        }
+		    });
+
+		});
+
+	});
+
+	// 手动去除线
+	$("#userLogin").focus(function(){
+		$(this).removeClass("error-input");
+	});
+	$("#userPassword").focus(function(){
+		$(this).removeClass("error-input");
+	});
+
+	// @todo 登录
+	$("#loginBtn").click(function(){
+		var userLogin = $("#userLogin").val();
+		var password = $("#userPassword").val();
+
+		// 账号是否为空
+		if(userLogin=="") {
+			doErrorInputAnimate("userLogin");
+			return false;
+		}
+		$("#userLogin").removeClass("error-input");
+
+		// 密码是否为空
+		if(password=="") {
+			doErrorInputAnimate("userPassword");
+			return false;
+		}
+		$("#userPassword").removeClass("error-input");
+
+		// 提交
+		$.post('/admin/readUserVer2',{'userLogin':userLogin, 'password':password}, function(data){
+			
+		    if(data['status']['success']) {
+		        autoMessageNotice("登录成功");
+		        setTimeout(function(){
+		          	window.location.href = '/admin/home';
+		        }, 2000);
+		    } else {
+		          autoMessageNotice(data['status']['message']);
+		    }
+			   
+		});
+
+	});
+
+	window.onkeypress=function(event){
+	    //回车事件
+	    if(event.keyCode==13){
+	    	$("#loginBtn").click();
+	    }
+	}
+
+});
+</script>

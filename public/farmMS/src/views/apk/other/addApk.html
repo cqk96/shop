@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>添加包管理</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=0">
+    <link rel="stylesheet" href="../../../layuiadmin/layui/css/layui.css" media="all">
+    <link rel="stylesheet" href="../../../layuiadmin/style/otherHtml.css" media="all">
+</head>
+<body>
+<div class="personal-box">
+    <!--信息-->
+    <div class="data-message layui-form" lay-filter="detailForm">
+        <div class="data-message-title">
+            <i class="layui-icon">❶</i>
+            <span>基础信息</span>
+            <span class="required" style="font-size: 10px;">注:' * '为必填项</span>
+        </div>
+        <div class="data-message-form layui-row layui-col-space15">
+            <div class="layui-col-md6">
+                <div class="data-item ">
+                    <label class="data-label">应用名<span class="required">*</span></label>
+                    <input type="text" class="layui-input" name="name" id="name" lay-verify="required|name" disabled="disabled">
+
+                </div>
+            </div>
+            <div class="layui-col-md6">
+                <div class="data-item">
+                    <label class="data-label">开发版本<span class="required">*</span></label>
+                    <input type="text" class="layui-input" name="versionCode" id="versionCode" placeholder="请输入版开发版本" lay-verify="required">
+                </div>
+            </div>
+            <div class="layui-col-md6">
+                <div class="data-item">
+                    <label class="data-label">用户版本<span class="required">*</span></label>
+                    <input type="text" class="layui-input" name="versionText" id="versionText" placeholder="请输入用户版本" lay-verify="required">
+                </div>
+            </div>
+            <div class="layui-col-md6">
+                <div class="data-item relative">
+                    <label class="data-label">包地址<span class="required">*</span></label>
+                    <input type="text" class="layui-input" name="apkUrl" id="apkUrl" lay-verify="required" disabled placeholder="点击右边按钮上传,后缀为.apk">
+                    <i class="layui-icon layui-icon-upload right-icon" id="uploadApk" style="color: #4A90E2;font-size: 20px;cursor: pointer;"></i>
+                </div>
+            </div>
+            <div class="layui-col-md12">
+                <div class="data-item">
+                    <label class="data-label">描述<span class="required">*</span></label>
+                    <textarea name="description" id="description" placeholder="请输入描述" class="layui-textarea" lay-verify="required"></textarea>
+                </div>
+            </div>
+        </div>
+
+        <div class="button-box">
+            <!--<img class="btn-img" src="../../../images/tijiao.png" alt="">-->
+            <button  lay-submit type="button" class="layui-btn layui-btn-normal" lay-filter="formSubmit">提交</button>
+            <button type="button" class="layui-btn layui-btn-primary" onclick="javascript:history.back(-1);">返回</button>
+
+        </div>
+    </div>
+</div>
+
+
+<script src="../../../layuiadmin/layui/layui.js"></script>
+<script src="../../../layuiadmin/jQuery/jquery-1.9.1/jquery.min.js"></script>
+<script src="../../../layuiadmin/js/global.js"></script>
+<script>
+
+    var submitting = false;
+
+    layui.config({
+        base: '../../layuiadmin/' //静态资源所在路径
+    }).extend({
+        index: 'lib/index' //主入口模块
+    }).use(['form','element','upload'] ,function () {
+        var form = layui.form;
+        var element = layui.element;
+        username = getCookie('username');
+        accessToken = getCookie('accessToken');
+        var upload = layui.upload;
+
+         $("#name").val('贡河田间管理');
+        //执行实例
+        upload.render({
+            elem: '#uploadApk' //绑定元素
+            ,url:  parent.layui.setter.host +'/api/v1/tools/attachment/upload' //上传接口
+            ,accept: 'file'
+            ,exts: 'apk'
+            ,done: function(res){
+
+                //上传完毕回调
+                layer.msg(res.status.message);
+                $("#apkUrl").val(res.data[0].uploadPath);
+            }
+            ,error: function(res){
+                //请求异常回调
+                layer.msg('请求异常')
+            }
+        });
+        //监听提交
+        form.on('submit(formSubmit)', function (data) {
+
+            if (submitting) {
+                layer.msg("数据正在传输,请勿重复点击");
+                return false;
+            }
+
+            submitting = true;
+            var formData = data.field;
+            formData['access_token'] = accessToken;
+            formData['user_login'] = username;
+
+            for (var i in formData){
+                if (formData[i] == ''){
+                    delete formData[i];
+                }
+            }
+            $.ajax({
+                url: parent.layui.setter.host + '/api/v1/apk/create'
+                , type: 'post'
+                , data: formData
+                , success: function (res) {
+                    if(res.status.code !== '001'){
+                        layer.msg(res.status.message);
+                        submitting = false;
+                        return;
+                    }
+                    layer.msg(res.status.message+',正在跳转');
+                    backHistory();
+                }
+                , error: function () {
+                    layer.msg('添加失败');
+                }
+            });
+        });
+
+    });
+
+
+</script>
+</body>
+</html>

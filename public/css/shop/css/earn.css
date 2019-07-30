@@ -1,0 +1,201 @@
+html,body,p{
+		padding: 0px;
+		margin: 0px;
+	}
+	html,body {
+		width: 100%;
+		height: 100%;
+	}
+	body {
+		background-color: #ededed;/* #*/
+	}
+	.header-box {
+		width: 100%;
+		height: 3rem;
+		background-color: #fff;
+		border: 0.01rem solid #FFF;
+	}
+	.header-title-box {
+		width: 100%;
+		height: 0.7rem;
+		font-size: 0.32rem;
+		text-align: center;
+		color: #333333;
+		line-height: 0.7rem;
+		/*margin-top: 0.5rem;*/
+		padding-top: 0.5rem;
+		font-weight: 900;
+	}
+	.money-box {
+		width: 100%;
+		height: 0.7rem;
+		font-size: 0.6rem;
+		text-align: center;
+		color: #8cd927;
+		line-height: 0.7rem;
+	}
+
+	/*提现*/
+	.earn-btn {
+		width: 1.3rem;
+		height: 0.5rem;
+		background-color: #77bc1f;
+		border-radius: 0.08rem;
+		color: #FFF;
+		text-align: center;
+		line-height: 0.5rem;
+		font-size: 0.32rem;
+		margin: 0.1rem auto 0px auto;
+	}
+
+	/*多种收益*/
+	.many-earn-box {
+		width: 100%;
+		height: 1.3rem;
+		background-color: #FFF;
+		margin-top: 0.2rem;
+	}
+	.each-earn-box {
+		width: 33.2%;
+		height: 100%;
+		float: left;
+	}
+	.special-earn-box {
+		margin-left: 0.2%;
+		margin-right: 0.2%;
+	}
+	.today-earn {
+		background-color: #ffbe0f;
+		position: relative;
+	}
+	.weekend-earn {
+		background-color: #f29d08;
+		position: relative;
+	}
+	.month-earn {
+		background-color: #f28108;
+		position: relative;
+	}
+	.earn-title {
+		font-size: 0.30rem;
+		color: #fff;
+		text-align: center;
+		margin-top: 0.2rem;
+	}
+	.real-earn {
+		font-size: 0.6rem;
+		color: #fff;
+		text-align: center;	
+	}
+	/*收益记录*/
+	.earn-record-box,.wallet-record-box{
+		width: 100%;
+		background-color: #FFF;
+	}
+	.wallet-record-box{
+		margin-top: 0.24rem;
+	}
+	.earn-record-title-box,.wallet-record-title-box{
+		margin: 0px auto 0px auto;
+		width: 90%;
+		height: 0.7rem;
+	}
+	.earn-record-title-box img,.wallet-record-title-box img{
+		display: block;
+		width: 0.33rem;
+		height: 0.38rem;
+		float: left;
+		margin-top: 0.125rem;
+		margin-right: 0.1rem;
+	}
+	.earn-record-title-concret,.wallet-record-title-concret{
+		width: 100%;
+		height: 100%;
+		line-height: 0.7rem;
+		font-size: 0.32rem;
+		color: #3f403e;
+		font-weight: 900;
+	}
+
+	/*每条收益记录*/
+	.each-earn-record-box,.each-wallet-record-box{
+		width: 90%;
+		margin: 0px auto;
+		height: 1.3rem;
+		border-bottom: 0.03rem dashed #dbdbdb;
+	}
+
+	/*收益与金额*/
+	.time-with-money-box,.time-with-result-box{
+		width: 100%;
+		position: relative;
+	}
+	.time-box {
+		color: #bebfbb;
+		font-size: 0.24rem;
+		position: relative;
+		font-weight: 900;
+		margin-top: 0.2rem;
+	}
+	.record-money-box,.record-result-box{
+		display: inline-block;
+		position: absolute;
+		top: 0px;
+		right: 0.2rem;
+		font-size: 0.24rem;
+		color: #d31826;
+		font-weight: 900;
+	}
+	.record-descrption {
+		color: #5c5d5b;
+		font-size: 0.24rem;
+		font-weight: 900;
+		margin-top: 0.2rem;
+		margin-bottom: 0.2rem;
+	}
+.show-more-earn-box,.show-more-wallet-box{
+	width: 100%;
+	height: 1rem;
+	margin: 0px auto;
+	font-size: 0.24rem;
+	color: #3f403e;
+	line-height: 1rem;
+	text-align: center;
+	font-weight: 900;
+	position: relative;
+}
+	/*这招三角形*/
+.transparent-trangel {
+	width: 0px;
+	height: 0px;
+	border-top: 0.15rem solid #FFF;
+	border-left: 0.15rem solid transparent;
+	border-right: 0.15rem solid transparent;
+	border-bottom: 0.15rem solid transparent;
+	position: absolute;
+	top: 0.35rem;
+	right: 0px;
+	z-index: 3;
+}
+/*下三角*/
+.down-trangel {
+	width: 0px;
+	height: 0px;
+	border-top: 0.15rem solid #4d4d4d;
+	border-left: 0.15rem solid transparent;
+	border-right: 0.15rem solid transparent;
+	border-bottom: 0.15rem solid transparent;
+	position: absolute;
+	top: 0.4rem;
+	right: 0px;
+}
+.nosee {
+	display: none;
+}
+.rest-div-30 {
+	width: 100%;
+	height: 0.3rem;
+}
+a {
+	text-decoration: none;
+}

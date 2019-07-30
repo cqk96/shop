@@ -1,0 +1,11 @@
+RewriteEngine On
+
+RewriteBase /
+
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+
+#RewriteRule news\/(.*?)\.html$ index.php/news/read?id=$1[QSA,S=1]
+RewriteRule ^(.*)$ index.php?/$1 [QSA]
+
+

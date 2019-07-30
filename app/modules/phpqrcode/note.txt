@@ -1,0 +1,1 @@
+qrencode.forbid 原文件名为 qrencode.php 因未使用并且composer.phar dump-autoload时存在警告所以更改了后缀名

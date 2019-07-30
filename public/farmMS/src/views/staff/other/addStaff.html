@@ -1,0 +1,679 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>添加人员</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=0">
+    <link rel="stylesheet" href="../../../layuiadmin/layui/css/layui.css" media="all">
+    <link rel="stylesheet" href="../../../layuiadmin/style/otherHtml.css" media="all">
+</head>
+<body>
+<div class="personal-box">
+    <!--信息-->
+    <div class="data-message layui-form" lay-filter="detailForm">
+        <div class="data-message-form layui-row layui-col-space15">
+            <div class="layui-col-md12" style="text-align: center;">
+                <div class="avatar-box">
+                    <i class="layui-icon layui-icon-picture avatar-icon"></i>
+                </div>
+                <button type="button" class="layui-btn layui-btn-primary layui-btn-sm" id="avatar">点击上传</button>
+            </div>
+        </div>
+        <div class="data-message-title">
+            <i class="layui-icon">❶</i>
+            <span>基础信息</span>
+            <span class="required" style="font-size: 10px;">注:' * '为必填项</span>
+        </div>
+        <div class="data-message-form layui-row layui-col-space15">
+            <div class="layui-col-md6">
+                <div class="data-item ">
+                    <label class="data-label">姓名<span class="required">*</span></label>
+                    <input type="text" class="layui-input" name="name" id="name" placeholder="请输入姓名" lay-verify="required|name">
+
+                </div>
+            </div>
+            <div class="layui-col-md6">
+                <div class="data-item">
+                    <label class="data-label">联系电话<span class="required">*</span></label>
+                    <input type="text" class="layui-input" name="phone" id="phone" placeholder="请输入电话" lay-verify="required|number">
+                </div>
+            </div>
+            <div class="layui-col-md6">
+                <div class="data-item">
+                    <label class="data-label">用户账号<span class="required">*</span></label>
+                    <input type="text" class="layui-input" name="username" id="username" placeholder="请输入账号" lay-verify="required|string">
+                </div>
+            </div>
+            <div class="layui-col-md6">
+                <div class="data-item ">
+                    <label class="data-label">国籍</label>
+                    <select name="nationality_number" id="nationality_number">
+                        <option value="1">中国</option>
+                        <option value="2">柬埔寨</option>
+                    </select>
+                </div>
+            </div>
+            <div class="layui-col-md6">
+                <div class="data-item ">
+                    <label class="data-label">名族</label>
+                    <input type="text" class="layui-input" name="ethnicity" id="ethnicity" placeholder="如:汉族" lay-verify="name">
+
+                </div>
+            </div>
+            <div class="layui-col-md6">
+                <div class="data-item ">
+                    <label class="data-label">籍贯</label>
+                    <input type="text" class="layui-input" name="native_place" id="native_place" placeholder="如:江西" lay-verify="name">
+
+                </div>
+            </div>
+            <div class="layui-col-md6">
+                <div class="data-item ">
+                    <label class="data-label">政治面貌</label>
+                    <select name="political" id="political" lay-filter="political">
+                        <option value="0">群众</option>
+                        <option value="1">团员</option>
+                        <option value="2">预备党员</option>
+                        <option value="3">党员</option>
+                    </select>
+                </div>
+            </div>
+            <div class="layui-col-md6">
+                <div class="data-item ">
+                    <label class="data-label">入团/党时间</label>
+                    <input type="text" class="layui-input select-time" name="join_time" id="join_time" placeholder="如:2018-07-11( 群众不填 )" lay-verify="name" disabled="disabled">
+                </div>
+            </div>
+            <div class="layui-col-md6">
+                <div class="data-item ">
+                    <label class="data-label">毕业院校</label>
+                    <input type="text" class="layui-input" name="university" id="university" placeholder="请输入最高学历的毕业院校" lay-verify="name">
+                </div>
+            </div>
+            <div class="layui-col-md6">
+                <div class="data-item ">
+                    <label class="data-label">所学专业</label>
+                    <input type="text" class="layui-input" name="major" id="major" placeholder="如:网络工程" lay-verify="name">
+                </div>
+            </div>
+            <div class="layui-col-md6">
+                <div class="data-item ">
+                    <label class="data-label">学历</label>
+                    <select name="education" id="education">
+                        <option value="0">无</option>
+                        <option value="1">博士</option>
+                        <option value="2">硕士</option>
+                        <option value="3">本科</option>
+                        <option value="4">专科</option>
+                        <option value="5">高中</option>
+                        <option value="6">初中</option>
+                    </select>
+                </div>
+            </div>
+            <div class="layui-col-md6">
+                <div class="data-item ">
+                    <label class="data-label">家庭住址</label>
+                    <input type="text" class="layui-input" name="address" id="address" placeholder="请输入家庭住址" lay-verify="name">
+                </div>
+            </div>
+            <div class="layui-col-md12">
+                <div class="data-item ">
+                    <label class="data-label">工作经历</label>
+                    <textarea name="work_experience" id="work_experience" placeholder="请输入工作经历" class="layui-textarea"></textarea>
+                </div>
+            </div>
+            <div class="layui-col-md6">
+                <div class="data-item ">
+                    <label class="data-label">工作年限</label>
+                    <input type="text" class="layui-input" name="working_life_time" id="working_life_time" placeholder="请输入年限,默认单位为'年'" lay-verify="name">
+                </div>
+            </div>
+            <div class="layui-col-md6">
+                <div class="data-item ">
+                    <label class="data-label">职务</label>
+                    <input type="text" class="layui-input" name="job" id="job" placeholder="请输入职务">
+                </div>
+            </div>
+            <div class="layui-col-md6">
+                <div class="data-item ">
+                    <label class="data-label">性别</label>
+                    <select name="gender" id="gender">
+                        <option value="1">男</option>
+                        <option value="2">女</option>
+                        <option value="3">保密</option>
+                    </select>
+                </div>
+            </div>
+            <div class="layui-col-md6">
+                <div class="data-item ">
+                    <label class="data-label">出生年月</label>
+                    <input type="text" class="layui-input select-time2" name="birthday" id="birthday" placeholder="如:1996-03-03( 群众不填 )" disabled="disabled">
+                </div>
+            </div>
+            <div class="layui-col-md12">
+                <div class="data-item ">
+                    <label class="data-label">介绍</label>
+                    <textarea name="introduce" id="introduce" placeholder="请自我介绍一番吧" class="layui-textarea"></textarea>
+                </div>
+            </div>
+
+
+            <!--// 主管id-->
+            <div class="layui-col-md12">
+                <div class="data-item">
+                    <label class="data-label">选择主管</label>
+                    <div class="manager checkout-list">
+
+                    </div>
+                </div>
+            </div>
+            <!--// 部门id-->
+            <div class="layui-col-md12">
+                <div class="data-item">
+                    <label class="data-label">选择部门</label>
+                    <div class="departments checkout-list">
+
+                    </div>
+                </div>
+            </div>
+            <!--// 角色id-->
+            <div class="layui-col-md12">
+                <div class="data-item">
+                    <label class="data-label">选择角色<span class="required">*</span></label>
+                    <div class="role checkout-list">
+
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="button-box">
+            <!--<img class="btn-img" src="../../../images/tijiao.png" alt="">-->
+            <button  lay-submit type="button" class="layui-btn layui-btn-normal" lay-filter="formSubmit">提交</button>
+            <button type="button" class="layui-btn layui-btn-primary" onclick="javascript:history.back(-1);">返回</button>
+
+        </div>
+    </div>
+</div>
+
+
+<script src="../../../layuiadmin/layui/layui.js"></script>
+<script src="../../../layuiadmin/jQuery/jquery-1.9.1/jquery.min.js"></script>
+<script src="../../../layuiadmin/js/global.js"></script>
+<script>
+
+    var submitting = false;
+
+    layui.config({
+        base: '../../layuiadmin/' //静态资源所在路径
+    }).extend({
+        index: 'lib/index' //主入口模块
+    }).use(['form','element','laydate','upload'] ,function () {
+        var form = layui.form;
+        username = getCookie('username');
+        accessToken = getCookie('accessToken');
+        tokenInvalid(accessToken,username);
+
+        var loginName = username;
+        var laydate = layui.laydate;
+        var upload = layui.upload;
+
+        //日期
+        laydate.render({
+            elem: '.select-time'
+        });
+        laydate.render({
+            elem: '.select-time2'
+        });
+
+        var $pervId = getCookie('$thisId');//上个页面的id 判断新建还是查看详情
+
+
+        // 获取主管列表
+        $.ajax({
+            url : parent.layui.setter.host + '/api/v1/user/managers/all?access_token='+accessToken+'&user_login='+loginName
+            ,type : 'get'
+            ,async:false
+            ,success : function (res) {
+                var lists = res.data;
+                if(res.code== '006' || res.code== '007' || res.code=='014'){
+                    parent.window.location.href="/crmFE/src/views/user/login.html";
+                }
+                for (var i = 0 ; i <= lists.length - 1; i++){
+
+                    var managerHtml = '<input type="radio" name="manager_id" title="'+lists[i].name +'" id="'+lists[i].id+'">';
+
+                    $(".manager").append(managerHtml);
+
+                    form.render();
+                }
+            }
+            ,error : function (res) {
+
+                layer.msg('请求失败')
+            }
+        });
+
+        // 获取部门列表
+        $.ajax({
+            url : parent.layui.setter.host + '/api/v1/department/all?access_token='+accessToken+'&user_login='+loginName
+            ,type : 'get'
+            ,async:false
+            ,success : function (res) {
+                if (res.status.code == '014'){
+
+                }
+                var lists = res.data;
+
+                for (var i = 0 ; i <= lists.length - 1; i++){
+
+                    // 上属部门
+                    var departmentHtml = '<input type="checkbox" name="departments" title="'+lists[i].name +'" id="'+lists[i].id+'" lay-skin="primary">';
+
+                    $(".departments").append(departmentHtml);
+
+                    form.render();
+                }
+
+            }
+            ,error : function (res) {
+
+                layer.msg('请求失败')
+            }
+        });
+
+        // 获取角色列表
+        $.ajax({
+            url : parent.layui.setter.host + '/api/v1/role/all?access_token='+accessToken+'&user_login='+loginName
+            ,type : 'get'
+            ,async:false
+            ,success : function (res) {
+                var lists = res.data;
+
+                for (var i = 0 ; i <= lists.length - 1; i++){
+
+                    var roleHtml = '<input type="checkbox" name="roles" title="'+lists[i].name +'" id="'+lists[i].id+'" lay-skin="primary">';
+
+                    $(".role").append(roleHtml);
+
+                    form.render();
+                }
+            }
+            ,error : function (res) {
+
+                layer.msg('请求失败')
+            }
+        });
+
+        // 监听团/党选择框
+        form.on('select(political)', function(data){
+            if (data.value == '0') {
+                $('#join_time').attr("disabled","disabled");
+                $("#join_time").val('');
+                $("#join_time").removeClass('select-time');
+                $('#birthday').attr("disabled","disabled");
+                $("#birthday").val('');
+                $("#birthday").removeClass('select-time2');
+            }else{
+                $('#join_time').attr("disabled",false);
+                $("#join_time").addClass('select-time');
+                $('#birthday').attr("disabled",false);
+                $("#birthday").addClass('select-time2');
+            }
+        });
+
+        if ( $pervId > 0){
+
+            $("#username").attr("disabled","disabled");
+            //获取用户详情
+            $.ajax({
+                url : parent.layui.setter.host + '/api/v1/user/info'
+                ,type : 'get'
+                ,data : {
+                    "access_token": accessToken
+                    ,"user_login": loginName
+                    ,"id" : $pervId
+                }
+                ,success : function (res) {
+                    var formStr = res.data;
+                    if(res.code== '006' || res.code== '007' || res.code=='014'){
+                        parent.window.location.href="/crmFE/src/views/user/login.html";
+                    }
+
+                    var joinTime;
+                    var birthday;
+                    if (formStr.join_time == null && formStr.birthday == null){
+                        joinTime = '';
+                        birthday = '';
+                    }else{
+                         joinTime = UnixToDate(formStr.join_time);
+                         birthday = UnixToDate(formStr.birthday);
+                    }
+
+                    var avatarHtml = '<img style="cursor: pointer;" title="点击查看大图" src="'+parent.layui.setter.host+formStr.avatar+'" alt="">';
+                    $(".avatar-box").append(avatarHtml);
+
+
+                    layer.photos({
+                        photos: '.avatar-box'
+                        ,anim: 5 //0-6的选择，指定弹出图片动画类型，默认随机（请注意，3.0之前的版本用shift参数）
+                    });
+
+                    form.val("detailForm", {
+                        "username": formStr.user_login
+                        ,"phone": formStr.phone
+                        ,"name": formStr.name
+                        ,"nationality_number": formStr.nationality_number
+                        ,"ethnicity": formStr.ethnicity
+                        ,"native_place": formStr.native_place
+                        ,"political": formStr.political
+                        ,"join_time": joinTime
+                        ,"university": formStr.university
+                        ,"job":formStr.job
+                        ,"major": formStr.major
+                        ,"education": formStr.education
+                        ,"address": formStr.address
+                        ,"work_experience": formStr.work_experience
+                        ,"working_life_time": formStr.working_life_time
+                        ,"nickname": formStr.nickname
+                        ,"gender": formStr.gender
+                        ,"age": formStr.age
+                        ,"introduce": formStr.introduce
+                        ,"job": formStr.job
+                        ,"birthday": birthday
+                    });
+
+                    // 部门
+                    var allDepartmentsInput =  $(".departments input"); // 获取页面显示的全部的部门
+
+                    for (var j = 0; j <= allDepartmentsInput.length - 1; j++){
+                        var allId = allDepartmentsInput[j].id;  // 拿到页面中 全部的id
+                        if(formStr.departmentsIds == null){
+
+                        }else{
+                            for (var i = 0; i<= formStr.departmentsIds.length - 1 ; i++){
+                                var allSelect = formStr.departmentsIds[i];
+                                if (allId == allSelect) {
+                                    $('.departments').find('#'+allId+'').prop("checked", true);
+                                }
+                            }
+                        }
+                    }
+
+                    // 角色
+                    var allRoleInput =  $(".role input"); // 获取页面显示的全部的部门
+
+                    for (var j = 0; j <= allRoleInput.length - 1; j++){
+                        var allId = allRoleInput[j].id;  // 拿到页面中 全部的id
+                        for (var i = 0; i<= formStr.roles.length - 1 ; i++){
+
+                            var allSelect = formStr.roles[i].checked; // 获取该账号的选中的信息
+
+                            if (allSelect == true){
+                                if (formStr.roles[i].id == allId){
+                                    $('.role').find('#'+allId+'').prop("checked", true);
+                                }
+                            }
+                        }
+
+                    }
+
+                    // 主管
+                    var allManagerInput =  $(".manager input"); // 获取页面显示的全部的部门
+
+                    for (var j = 0; j <= allManagerInput.length - 1; j++){
+
+                        var allId = allManagerInput[j].id;  // 拿到页面中 全部的id
+                        if(formStr.manager_id == null){
+                        }else{
+                            var allSelect = formStr.manager_id; // 获取该账号的选中的信息
+
+                            if (allId == allSelect) {
+                                $('.manager').find('#'+allId+'').prop("checked", true);
+                            }
+                        }
+                    }
+                    form.render();
+                }
+                ,error : function (res) {
+                    layer.msg('请求失败')
+                }
+            });
+
+            //上传头像
+            upload.render({
+                elem: '#avatar' //绑定元素
+                ,url: parent.layui.setter.host + '/api/v1/tools/uploadImage' //上传接口
+                ,done: function(res){
+                    var avatar = res.data;
+                    var avatarHtml = '<img src="'+parent.layui.setter.host+avatar[0].url+'" alt="">';
+                    $(".avatar-box").append(avatarHtml);
+
+                    avatarUrl = avatar[0].url
+                    //上传完毕回调
+                }
+                ,error: function(){
+                    //请求异常回调
+                }
+            });
+            // 提交修改
+            form.on('submit(formSubmit)', function (data) {
+
+                if (submitting) {
+                    layer.msg("数据正在传输,请勿重复点击");
+                    return false;
+                }
+                submitting = true;
+
+                var formData = data.field;
+
+                // 主管
+                var managerIdArr = [];
+                $("input:radio[name='manager_id']:checked").each(function() {
+                    var managerId = '';
+                    managerId +=  $(this).attr("id");
+
+                    managerIdArr.push(managerId);
+                    return managerIdArr;
+                });
+                // 部门
+                var departmentIdArr = [];
+                $("input:checked[name='departments']:checked").each(function() {
+                    var departmentId = '';
+                    departmentId +=  $(this).attr("id");
+
+                    departmentIdArr.push(departmentId);
+                    return departmentIdArr;
+                });
+
+                // 角色
+                var rolesIdArr = [];
+                $("input:checked[name='roles']:checked").each(function() {
+                    var rolesId = '';
+                    rolesId +=  $(this).attr("id");
+
+                    rolesIdArr.push(rolesId);
+                    return rolesIdArr;
+                });
+
+                departmentIdArr = departmentIdArr.join(',');
+                rolesIdArr = rolesIdArr.join(',');
+                managerIdArr = managerIdArr.join(',');
+
+                formData['manager_id'] = managerIdArr ;
+                formData['roles'] = rolesIdArr ;
+                formData['departments'] = departmentIdArr ;
+                formData['access_token'] = accessToken ;
+                formData['user_login'] = loginName ;
+                formData['avatar'] = avatarUrl ;
+                formData['id'] = $pervId ;
+
+                for (var i in formData){
+                    if (formData[i] == ''){
+                        delete formData[i];
+                    }
+                    delete formData.username;
+                }
+
+                $.ajax({
+                    url: parent.layui.setter.host + '/api/v1/user/back/update'
+                    ,type : 'post'
+                    ,data : formData
+                    ,success : function (res) {
+
+                        if(res.status.code !== '001'){
+                            layer.msg(res.status.message);
+                            submitting = false;
+                            return;
+                        }
+                        layer.msg(res.status.message+',正在跳转');
+                        backHistory();
+                    }
+                    ,error : function () {
+                        layer.msg('修改失败');
+                    }
+                });
+            });
+        }else{
+            // 新增页面  监听提交
+            var avatarUrl;
+            //上传头像
+            upload.render({
+                elem: '#avatar' //绑定元素
+                ,url: parent.layui.setter.host + '/api/v1/tools/uploadImage' //上传接口
+                ,done: function(res){
+                    var avatar = res.data;
+                    var avatarHtml = '<img style="cursor: pointer;" title="点击查看大图" src="'+parent.layui.setter.host+avatar[0].url+'" alt="">';
+                    $(".avatar-box").append(avatarHtml);
+
+
+                    avatarUrl = avatar[0].url
+
+                    layer.photos({
+                        photos: '.avatar-box'
+                        ,anim: 5 //0-6的选择，指定弹出图片动画类型，默认随机（请注意，3.0之前的版本用shift参数）
+                    });
+                }
+                ,error: function(){
+                    //请求异常回调
+                }
+            });
+
+            // 账号是否存在
+            $("#username").blur(function(){
+                var $this = $(this);
+                var usernameText = $this.val();
+
+                $.ajax({
+                    url :  parent.layui.setter.host + '/api/v1/user/hasAccount'
+                    ,type : 'get'
+                    ,data : {
+                        "access_token": accessToken ,
+                        "user_login" : loginName ,
+                        "username" : usernameText
+                    }
+                    ,success: function (res) {
+                        if (res.data == true){
+                            layer.msg('账号已经存在请重新填写', function(){});
+                        }
+                        form.verify({
+                            string: [
+                                /^[0-9a-z]*$/g
+                                ,'只能输入小写字母或数字'
+                            ]
+                        })
+                    }
+                });
+            });
+            form.on('submit(formSubmit)', function (data) {
+
+                if (submitting) {
+                    layer.msg("数据正在传输,请勿重复点击");
+                    return false;
+                }
+                submitting = true;
+
+                var formData = data.field;
+
+                // 主管
+                var managerIdArr = [];
+                $("input:radio[name='manager_id']:checked").each(function() {
+                    var managerId = '';
+                    managerId +=  $(this).attr("id");
+
+                    managerIdArr.push(managerId);
+
+                    return managerIdArr;
+                });
+                // 部门
+                var departmentIdArr = [];
+                $("input:checked[name='departments']:checked").each(function() {
+                    var departmentId = '';
+                    departmentId +=  $(this).attr("id");
+
+                    departmentIdArr.push(departmentId);
+                    return departmentIdArr;
+                });
+
+                // 角色
+                var rolesIdArr = [];
+                $("input:checked[name='roles']:checked").each(function() {
+                    var rolesId = '';
+                    rolesId +=  $(this).attr("id");
+                    rolesIdArr.push(rolesId);
+                    return rolesIdArr;
+                });
+                if (rolesIdArr == ''){
+                    layer.msg('请填写角色后再提交');
+                    submitting = false;
+                    return;
+                }
+                departmentIdArr = departmentIdArr.join(',');
+                rolesIdArr = rolesIdArr.join(',');
+                managerIdArr = managerIdArr.join(',');
+
+                formData['manager_id'] = managerIdArr ;
+                formData['roles'] = rolesIdArr ;
+                formData['departments'] = departmentIdArr ;
+                formData['access_token'] = accessToken ;
+                formData['user_login'] = loginName ;
+                formData['avatar'] = avatarUrl ;
+
+                for (var i in formData){
+                    if (formData[i] == ''){
+                        delete formData[i];
+                    }
+                }
+
+                $.ajax({
+                    url: parent.layui.setter.host + '/api/v1/user/create'
+                    ,type : 'post'
+                    ,data : formData
+                    ,success : function (res) {
+                        if(res.status.code !== '001'){
+                            layer.msg(res.status.message);
+                            submitting = false;
+                            return;
+                        }
+                        layer.msg(res.status.message+',正在跳转');
+                        backHistory();
+
+                    }
+                    ,error : function () {
+                        layer.msg('添加失败');
+                    }
+                });
+            });
+
+        }
+
+
+    });
+
+
+</script>
+</body>
+</html>

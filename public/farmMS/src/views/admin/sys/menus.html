@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>后台菜单管理</title>
+    <link rel="stylesheet" href="../../../layuiadmin/layui/css/layui.css" media="all">
+    <link rel="stylesheet" href="../../../layuiadmin/style/table.css" media="all">
+    <link rel="stylesheet" href="../../../layuiadmin/js/jsTools/zTree/css/zTreeStyle.css" media="all">
+</head>
+<body>
+    <div class="layui-row table-box">
+        <div class="table-title layui-col-md12">后台菜单管理
+            <ul class="table-title-tool">
+                <li title="添加" data-name="other">
+                    <a href="#" onclick="addNewMenus(this)">
+                        <img src="../../../images/tianjia.png" alt="">
+                        <span style="display: none">添加客户</span>
+                    </a>
+                </li>
+            </ul>
+        </div>
+        <!--表格-->
+        <div id="menusTable" class="table-data layui-col-md12" lay-filter="table-tool"></div>
+    </div>
+</body>
+<script type="text/html" id="tableTool">
+    <a class="layui-btn layui-btn-primary layui-btn-xs" lay-event="detail">查看编辑</a>
+    <a class="layui-btn layui-btn-xs" lay-event="addChildren">添加</a>
+    <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>
+</script>
+<!--查看菜单-->
+<script type="text/html" id="detail">
+    <div class="zTreeDemoBackground left">
+        <ul id="treeDemo" class="ztree"></ul>
+    </div>
+</script>
+
+<!--添加-->
+<script type="text/html" id="addMenus">
+    <form action="" class="layui-form append-form">
+
+        <div class="layui-form-item">
+            <label class="form-label">菜单名称:</label>
+            <div class="layui-input-inline">
+                <input type="text" name="title" required lay-verify="required" placeholder="人员管理" autocomplete="off"
+                       class="layui-input new-menu-name">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="form-label">路径:</label>
+            <div class="layui-input-inline">
+                <input type="text" name="title" required lay-verify="required" placeholder="如:staff/staff.html"
+                       autocomplete="off" class="layui-input new-menu-path">
+            </div>
+        </div>
+
+    </form>
+
+</script>
+<script type="text/javascript" src="../../../layuiadmin/layui/layui.js"></script>
+<script type="text/javascript" src="../../../layuiadmin/js/global.js"></script>
+<script type="text/javascript" src="../../../layuiadmin/jQuery/jquery-1.9.1/jquery.js"></script>
+<script type="text/javascript" src="../../../layuiadmin/js/jsTools/zTree/js/jquery.ztree.core.js"></script>
+<script type="text/javascript" src="../../../layuiadmin/js/jsTools/zTree/js/jquery.ztree.excheck.js"></script>
+<script type="text/javascript" src="../../../layuiadmin/js/jsTools/zTree/js/jquery.ztree.exedit.js"></script>
+<script>
+
+
+    layui.config({
+        base: '../layuiadmin/' //静态资源所在路径
+    }).extend({
+        index: 'lib/index' //主入口模块
+    }).use([ 'jquery', 'element', 'table','form', 'tree'], function () {
+        var $ = layui.jquery;
+        var element = layui.element;
+        var table = layui.table;
+        var form = layui.form;
+        topcateid = 0;
+         username = getCookie('username');
+         accessToken = getCookie('accessToken');
+        var page = 1; // 第一页
+        var pageSize = 10; // 每页的行数
+
+        table.render({
+            elem: '#menusTable'
+            , url: parent.layui.setter.host + '/api/v1/menu/lists'
+            , type: 'get'
+            , cols: [[
+                {field: 'id', title: 'id', width: 60, align: 'center'}
+                , {field: 'name', title: '菜单名称', align: 'center'}
+                , {field: 'url', title: '路径', align: 'center'}
+                , {field: 'pageSort', title: '页面排序', sort: true, align: 'center'}
+                , {title: '操作', toolbar: '#tableTool', align: 'center'}
+            ]]
+            , skin: 'nob' //行边框风格
+            , request: {
+                pageName: 'page' //页码的参数名称，默认：page
+                , limitName: 'size' //每页数据量的参数名，默认：limit
+            }
+            , where: {
+                access_token: accessToken,
+                user_login: username,
+            }
+            , response: {
+                statusName: 'code' //数据状态的字段名称，默认：code
+                , statusCode: '001' //成功的状态码，默认：0
+                , msgName: 'message' //状态信息的字段名称，默认：msg
+                , countName: 'totalCount' //数据总数的字段名称，默认：count
+                , dataName: 'data' //数据列表的字段名称，默认：data
+            }
+            , page: {
+                layout: ['prev', 'page', 'next', 'count', 'skip', 'limit'] //自定义分页布局
+                , groups: 5 //只显示 5 个连续页码
+                , first: "首页" //显示首页
+                , last: "尾页" //显示尾页
+                , limit: pageSize
+            }
+            , done: function (res) {
+                identityFailure(res.code);
+            }
+        });
+
+
+        //监听工具条
+        table.on('tool(table-tool)', function(obj){
+            var data = obj.data;
+            if(obj.event === 'detail'){ // 查看
+                //获取详情
+                $.ajax({
+                    url : parent.layui.setter.host + '/api/v1/menu/read',
+                    type: 'get'
+                    ,data : {
+                       "access_token" : accessToken
+                        ,"user_login" : username
+                        ,"id" : data.id
+                    }
+                    ,success : function(res){
+                        var $thisDetail = res.data;
+                        var $thisName = $thisDetail.name;
+                        var $thisUrl = $thisDetail.url;
+                        var $pId = $thisDetail.parentid;
+                        var $thisId = $thisDetail.id;
+
+                        var detailHtml = '';
+                        detailHtml += '<div class="layui-form" style="margin-top: 20px;">';
+                        detailHtml += '<div class="layui-form-item">';
+                        detailHtml += '        <label class="form-label">菜单名称:</label>';
+                        detailHtml += '    <div class="layui-input-inline">';
+                        detailHtml += '       <input type="text" name="title" autocomplete="off" class="layui-input new-menu-name" value="'+$thisName+'">';
+                        detailHtml += '        </div>';
+                        detailHtml += '        </div>';
+                        detailHtml += '        <div class="layui-form-item">';
+                        detailHtml += '        <label class="form-label">路径:</label>';
+                        detailHtml += '    <div class="layui-input-inline">';
+                        detailHtml += '       <input type="text" name="title" autocomplete="off" class="layui-input new-menu-path" value="'+$thisUrl+'">';
+                        detailHtml += '        </div>';
+                        detailHtml += '       </div>';
+                        detailHtml += '</div>';
+
+                        layer.open({
+                            title:'查看菜单',
+                            type:1
+                            ,btn:['确认','取消']
+                            ,area :['380px','250px']
+                            ,yes :function(index){
+                                var changeName = $(".new-menu-name").val();
+                                var changeUrl = $(".new-menu-path").val();
+
+                                $.ajax({
+                                    url : parent.layui.setter.host + '/api/v1/menu/update',
+                                    type: 'post'
+                                    ,data : {
+                                        "access_token" : accessToken
+                                        ,"user_login" : username
+                                        ,"id" : $thisId
+                                        ,"name" : changeName
+                                        ,"url" : changeUrl
+                                        ,"parentid":$pId
+                                        ,"show" :'1'
+                                    }
+                                    ,success : function (res) {
+                                        layer.msg(res.status.message);
+                                    }
+                                    ,error :function (res) {
+                                        layer.msg('提交失败');
+                                    }
+                                });
+
+                                layer.close(index);
+                            }
+                            ,btn2 :function(index){
+                                layer.close(index);
+                            }
+                            ,content : detailHtml
+                        });
+
+
+
+
+                    },
+                    error : function (res) {
+                        // console.log(res)
+                    }
+                });
+
+            } else if(obj.event === 'del'){
+
+                var url = parent.layui.setter.host + '/api/v1/menu/delete?access_token='+accessToken+'&user_login='+username+'&ids=' + data.id;
+                layer.confirm('确认删除这个菜单?',{
+                    title : '提示',
+                    btn :['确认','取消'],
+                    yes : function(index){
+                        $.ajax({
+                            url:url
+                            ,type : 'post'
+                            ,success : function (res) {
+                                obj.del();
+                                layer.msg('删除成功');
+
+                            }
+                        });
+                        layer.close(index);
+                    },
+                    btn2 : function(index){
+                        layer.close(index);
+                    }
+                })
+
+
+
+            } else if(obj.event === 'addChildren'){
+                var addSubmenuHtml = $("#addMenus").html();
+                layui.use('form',function () {
+                    var form = layui.form;
+                    layer.open({
+                        title: '添加新菜单',
+                        type:1,
+                        area :['400px','300px'],
+                        btn:["确认", "取消"],
+                        yes :function(res){
+
+                            var newMenuName = layui.$(".new-menu-name").val();
+                            var newMenuPath = layui.$(".new-menu-path").val();
+
+                            var url = parent.layui.setter.host + '/api/v1/menu/create?access_token='+accessToken+'&user_login='+username+ '&parentid='+data.id + '&name='+newMenuName+'&url='+newMenuPath;
+
+                            $.ajax({
+                                url : url
+                                ,type : 'post'
+                                ,success : function (res) {
+                                    console.log(res);
+                                    layer.msg('添加成功!');
+                                }
+                            });
+                            layer.close(res);
+                        },
+
+                        btn2 :function (res) {
+                            layer.close(res);
+                        },
+                        content : addSubmenuHtml
+
+                    });
+                    form.render();
+                });
+            }
+        });
+    });
+
+
+
+
+    // 添加新菜单(一级菜单)
+    function addNewMenus(obj){
+        var addMenusHtml = layui.$("#addMenus").html();
+
+        layui.use('form',function () {
+            var form = layui.form;
+            layer.open({
+                title: '添加新菜单',
+                type:1,
+                area :['400px','300px'],
+                btn:["确认", "取消"],
+                yes :function(res){
+                    var newMenuName = layui.$(".new-menu-name").val();
+                    var newMenuPath = layui.$(".new-menu-path").val();
+                    layui.$.ajax({
+                        url : parent.layui.setter.host + '/api/v1/menu/create?access_token='+accessToken+'&user_login='+username+'&name='+newMenuName+'&url='+newMenuPath
+                        ,type : 'post'
+                        ,success : function (res) {
+                            // console.log(res);
+                            layer.msg('添加成功!');
+                        }
+                        ,error : function (res) {
+                            layer.msg('添加失败!');
+                        }
+                    });
+                    layer.close(res);
+                },
+
+                btn2 :function (res) {
+                    layer.close(res);
+                },
+                content : addMenusHtml
+
+            });
+            form.render();
+        });
+    }
+
+</script>
+</html>

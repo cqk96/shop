@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>十日报审批详情</title>
+    <link rel="stylesheet" href="../../../../layuiadmin/layui/css/layui.css" media="all">
+    <link rel="stylesheet" href="../../../../layuiadmin/style/table.css" media="all">
+    <style type="text/css">
+    body {
+        background-color: #FFF;
+    }
+    .nosee {
+        display: none;
+    }
+    </style>
+</head>
+<body>
+    <form class="layui-form" action="">
+        <div class="layui-form-item">
+            <label class="layui-form-label">班组</label>
+            <div class="layui-input-block">
+              <input type="text" id="departmentName" placeholder="请输入班组" autocomplete="off" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">地块</label>
+            <div class="layui-input-block">
+              <input type="text" id="acreName" placeholder="请输入地块" autocomplete="off" class="layui-input">
+            </div>
+        </div>
+         <div class="layui-form-item">
+            <label class="layui-form-label">负责人</label>
+            <div class="layui-input-block">
+              <input type="text" id="userName" placeholder="请输入负责人" autocomplete="off" class="layui-input">
+            </div>
+        </div> 
+        <div class="layui-form-item">
+            <div class="layui-inline">
+              <label class="layui-form-label">时间区间</label>
+              <div class="layui-input-inline" style="width: 100px;">
+                <input type="text" id="start_time" autocomplete="off" class="layui-input">
+              </div>
+              <div class="layui-form-mid">-</div>
+              <div class="layui-input-inline" style="width: 100px;">
+                <input type="text" id="end_time" autocomplete="off" class="layui-input">
+              </div>
+            </div>
+        </div>
+        <div class="layui-form-item layui-form-text">
+            <label class="layui-form-label">本期工作内容</label>
+            <div class="layui-input-block">
+              <textarea id="current_work_content" placeholder="请输入本期工作内容" class="layui-textarea"></textarea>
+            </div>
+        </div>
+         <div class="layui-form-item">
+            <label class="layui-form-label">下期工作计划</label>
+            <div class="layui-input-block">
+              <input type="text" id="next_working_plan" placeholder="请输入下期工作计划" autocomplete="off" class="layui-input">
+            </div>
+        </div> 
+         <div class="layui-form-item">
+            <label class="layui-form-label">班组成员数</label>
+            <div class="layui-input-block">
+              <input type="text" id="number_of_group_members" placeholder="请输入班组成员数" autocomplete="off" class="layui-input">
+            </div>
+        </div> 
+         <div class="layui-form-item">
+            <label class="layui-form-label">机动人员数</label>
+            <div class="layui-input-block">
+              <input type="text" id="working_members_count" placeholder="请输入机动人员数" autocomplete="off" class="layui-input">
+            </div>
+        </div> 
+        <div class="layui-form-item">
+            <label class="layui-form-label">本期完成情况</label>
+            <div class="layui-input-block">
+              <input type="text" id="completion_of_current_term" placeholder="请输入本期完成情况" autocomplete="off" class="layui-input">
+            </div>
+        </div> 
+        <div class="layui-form-item">
+            <label class="layui-form-label">存在问题与解决措施</label>
+            <div class="layui-input-block">
+              <input type="text" id="existing_problems" placeholder="请输入存在问题与解决措施" autocomplete="off" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">上期提出的主要问题整改、落实情况</label>
+            <div class="layui-input-block">
+              <input type="text" id="prior_period_existing_problems" placeholder="请输入上期提出的主要问题整改、落实情况" autocomplete="off" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item nosee farm-leader-evaluation ">
+            <label class="layui-form-label">场长(总监)意见及对策</label>
+            <div class="layui-input-block">
+              <textarea id="farmLeaderEvaluation" placeholder="请输入场长(总监)意见及对策" class="layui-textarea"></textarea>
+            </div>
+        </div> 
+        <div class="layui-form-item nosee company-executives-evaluation ">
+            <label class="layui-form-label">公司高管意见</label>
+            <div class="layui-input-block">
+                <textarea id="companyExecutivesEvaluation" placeholder="请输入公司高管意见" class="layui-textarea"></textarea>
+            </div>
+        </div>
+
+        <div class="layui-form-item">
+            <div class="layui-input-block">
+                <a href="javascript:history.back(-1);" class="layui-btn layui-btn-warm">返回</a>
+            </div>
+        </div>
+        
+    </form>
+</body>
+
+<script type="text/javascript" src="../../../../layuiadmin/layui/layui.js"></script>
+<script type="text/javascript" src="../../../../layuiadmin/js/global.js"></script>
+<script type="text/javascript">
+
+layui.config({
+        base: '../../../layuiadmin/' //静态资源所在路径
+    }).extend({
+        index: 'lib/index' //主入口模块
+    }).use([ 'jquery', 'element', 'table','form', 'tree'], function () {
+        $ = layui.$;
+        var element = layui.element;
+        var table = layui.table;
+        var form = layui.form;
+        topcateid = 0;
+
+        username = getCookie('username');
+        accessToken = getCookie('accessToken');
+        var host = parent.layui.setter.host;
+
+        /*要获取 url上id的值*/
+        var curId = getCookie('diaryId');
+        var approverTypeId = getCookie('approverTypeId');
+
+        $.ajax({
+            url: host + "/api/v1/diary/tenDayDiary/detail",
+            type: "GET",
+            cache: false,
+            async: false,
+            data: {
+                access_token: accessToken,
+                user_login: username,
+                id: curId,
+                time: new Date()
+            },
+            success : function (res) {
+
+                identityFailure(res.status.code);
+
+                if (res.status.code != '001'){
+                    layer.msg(''+res.status.message+'');
+                    return false;
+                }
+
+                var next_working_plan = res['data']['next_working_plan']==""? "未填写":res['data']['next_working_plan'];
+                var existing_problems = res['data']['existing_problems']==""? "未填写":res['data']['existing_problems'];
+                var prior_period_existing_problems = res['data']['prior_period_existing_problems']==""? "未填写":res['data']['prior_period_existing_problems'];
+
+                var farmLeaderEvaluation = res['data']['farmLeaderEvaluation']==""? "未添加":res['data']['farmLeaderEvaluation'];
+                var companyExecutivesEvaluation = res['data']['companyExecutivesEvaluation']==""? "未添加":res['data']['companyExecutivesEvaluation'];
+                
+                $("#departmentName").val( res['data']['departmentName'] );
+                $("#acreName").val( res['data']['acreName'] );
+                $("#userName").val( res['data']['userName'] );
+                $("#start_time").val( res['data']['start_time'] );
+                $("#end_time").val( res['data']['end_time'] );
+                $("#current_work_content").val( res['data']['current_work_content'] );
+                $("#next_working_plan").val( next_working_plan );
+                $("#number_of_group_members").val( res['data']['number_of_group_members'] );
+                $("#working_members_count").val( res['data']['working_members_count'] );
+                $("#completion_of_current_term").val( res['data']['completion_of_current_term'] );
+                $("#existing_problems").val( existing_problems );
+                $("#prior_period_existing_problems").val( prior_period_existing_problems );
+                $("#farmLeaderEvaluation").val( farmLeaderEvaluation );
+                $("#companyExecutivesEvaluation").val( companyExecutivesEvaluation );
+
+                if( approverTypeId==1108 ) {
+                    // 厂长
+                    $('.farm-leader-evaluation').removeClass("nosee");
+                    $('.company-executives-evaluation').remove();
+                }
+                if( approverTypeId==1109 ) {
+                    // 高管
+                    $('.farm-leader-evaluation').removeClass("nosee");
+                    $('.company-executives-evaluation').removeClass("nosee");
+                }
+                // console.log( approverTypeId );
+                // console.log( res );
+            },
+        })
+        form.render();
+
+    });
+</script>

@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>月报详情</title>
+    <link rel="stylesheet" href="../../../../layuiadmin/layui/css/layui.css" media="all">
+    <link rel="stylesheet" href="../../../../layuiadmin/style/table.css" media="all">
+    <style type="text/css">
+    body {
+        background-color: #FFF;
+    }
+    </style>
+</head>
+<body>
+    <form class="layui-form" action="">
+        <div class="layui-form-item">
+            <div class="layui-inline">
+              <label class="layui-form-label">日期</label>
+              <div class="layui-input-inline" style="">
+                <input type="text" id="datemonth" autocomplete="off" class="layui-input">
+              </div>
+            </div>
+        </div>
+        
+        <div class="layui-form-item layui-form-text">
+            <label class="layui-form-label">工作内容</label>
+            <div class="layui-input-block">
+              <textarea id="content" placeholder="请输入工作内容" class="layui-textarea"></textarea>
+            </div>
+        </div> 
+        <div class="layui-form-item">
+            <label class="layui-form-label">姓名译音</label>
+            <div class="layui-input-block">
+              <input type="text" id="transliteration" placeholder="请输入姓名译音" autocomplete="off" class="layui-input">
+            </div>
+        </div> 
+        <div class="layui-form-item">
+            <label class="layui-form-label">养护情况</label>
+            <div class="layui-input-block">
+              <input type="text" id="maintenance" placeholder="请输入养护情况" autocomplete="off" class="layui-input">
+            </div>
+        </div> 
+        <div class="layui-form-item">
+            <label class="layui-form-label">除草情况</label>
+            <div class="layui-input-block">
+              <input type="text" id="weed" placeholder="请输入除草情况" autocomplete="off" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">机械使用情况</label>
+            <div class="layui-input-block">
+              <input type="text" id="mechanical_usage" placeholder="请输入机械使用情况" autocomplete="off" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">施肥情况</label>
+            <div class="layui-input-block">
+              <input type="text" id="fertilization" placeholder="请输入施肥情况" autocomplete="off" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">其他情况</label>
+            <div class="layui-input-block">
+              <input type="text" id="other_work" placeholder="请输入其他情况" autocomplete="off" class="layui-input">
+            </div>
+        </div> 
+        <div class="layui-form-item layui-form-text">
+            <label class="layui-form-label">备注</label>
+            <div class="layui-input-block">
+              <textarea id="remarks" placeholder="请输入备注" class="layui-textarea"></textarea>
+            </div>
+        </div>
+
+        <div class="layui-form-item">
+            <div class="layui-input-block">
+                <a href="javascript:history.back(-1);" class="layui-btn layui-btn-warm">返回</a>
+            </div>
+        </div>
+        
+    </form>
+</body>
+
+<script type="text/javascript" src="../../../../layuiadmin/layui/layui.js"></script>
+<script type="text/javascript" src="../../../../layuiadmin/js/global.js"></script>
+<script type="text/javascript">
+
+layui.config({
+        base: '../../../layuiadmin/' //静态资源所在路径
+    }).extend({
+        index: 'lib/index' //主入口模块
+    }).use([ 'jquery', 'element', 'table','form', 'tree'], function () {
+        $ = layui.$;
+        var element = layui.element;
+        var table = layui.table;
+        var form = layui.form;
+        topcateid = 0;
+
+        username = getCookie('username');
+        accessToken = getCookie('accessToken');
+        var host = parent.layui.setter.host;
+
+        /*要获取 url上id的值*/
+        var curId = getCookie('diaryId');
+
+        $.ajax({
+            url: host + "/api/v1/diary/monthly/detail",
+            type: "GET",
+            cache: false,
+            async: false,
+            data: {
+                access_token: accessToken,
+                user_login: username,
+                id: curId,
+                time: new Date()
+            },
+            success : function (res) {
+
+                identityFailure(res.status.code);
+
+                if (res.status.code != '001'){
+                    layer.msg(''+res.status.message+'');
+                    return false;
+                }
+
+                if (res.status.code == '001' && typeof(res.data)==null ){
+                    layer.msg('无法查询到数据');
+                    return false;
+                }
+
+                var other_work = res['data']['other_work']==""? "未填写":res['data']['other_work'];
+                var remarks = res['data']['remarks']==""? "未填写":res['data']['remarks'];
+                
+                $("#datemonth").val( res['data']['year'] + "-" + res['data']['month'] );
+                $("#content").val( res['data']['content'] );
+                $("#transliteration").val( res['data']['transliteration'] );
+
+                $("#maintenance").val( res['data']['maintenance'] );
+                $("#weed").val( res['data']['weed'] );
+                $("#mechanical_usage").val( res['data']['mechanical_usage'] );
+                $("#fertilization").val( res['data']['fertilization'] );
+                $("#other_work").val( other_work );
+                $("#remarks").val( remarks );
+
+            },
+        })
+        form.render();
+
+    });
+</script>

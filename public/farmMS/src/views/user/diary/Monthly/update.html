@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>修改月报</title>
+    <link rel="stylesheet" href="../../../../layuiadmin/layui/css/layui.css" media="all">
+    <link rel="stylesheet" href="../../../../layuiadmin/style/table.css" media="all">
+    <style type="text/css">
+    body {
+        background-color: #FFF;
+    }
+    </style>
+</head>
+<body>
+    <form class="layui-form" action="">
+        <div class="layui-form-item">
+            <div class="layui-inline">
+              <label class="layui-form-label">日期</label>
+              <div class="layui-input-inline" style="">
+                <input type="text" id="datemonth" name="datemonth" required lay-verify="required|date" autocomplete="off" class="layui-input">
+              </div>
+            </div>
+        </div>
+        
+        <div class="layui-form-item layui-form-text">
+            <label class="layui-form-label">工作内容</label>
+            <div class="layui-input-block">
+              <textarea id="content" name="content" placeholder="请输入工作内容"  required lay-verify="required" class="layui-textarea"></textarea>
+            </div>
+        </div> 
+        <div class="layui-form-item">
+            <label class="layui-form-label">姓名译音</label>
+            <div class="layui-input-block">
+              <input type="text" id="transliteration" name="transliteration" required lay-verify="required" placeholder="请输入姓名译音" autocomplete="off" class="layui-input">
+            </div>
+        </div> 
+        <div class="layui-form-item">
+            <label class="layui-form-label">养护情况</label>
+            <div class="layui-input-block">
+              <input type="text" id="maintenance" name="maintenance"  required lay-verify="required" placeholder="请输入养护情况" autocomplete="off" class="layui-input">
+            </div>
+        </div> 
+        <div class="layui-form-item">
+            <label class="layui-form-label">除草情况</label>
+            <div class="layui-input-block">
+              <input type="text" id="weed" name="weed" required lay-verify="required" placeholder="请输入除草情况" autocomplete="off" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">机械使用情况</label>
+            <div class="layui-input-block">
+              <input type="text" id="mechanical_usage" name="mechanical_usage" required lay-verify="required" placeholder="请输入机械使用情况" autocomplete="off" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">施肥情况</label>
+            <div class="layui-input-block">
+              <input type="text" id="fertilization" name="fertilization" required lay-verify="required" placeholder="请输入施肥情况" autocomplete="off" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">其他情况</label>
+            <div class="layui-input-block">
+              <input type="text" id="other_work" name="other_work" placeholder="请输入其他情况" autocomplete="off" class="layui-input">
+            </div>
+        </div> 
+        <div class="layui-form-item layui-form-text">
+            <label class="layui-form-label">备注</label>
+            <div class="layui-input-block">
+              <textarea id="remarks" name="remarks" placeholder="请输入备注" class="layui-textarea"></textarea>
+            </div>
+        </div>
+
+        <div class="layui-form-item">
+            <div class="layui-input-block">
+                <button class="layui-btn" lay-submit lay-filter="submitForm">立即提交</button>
+                <a href="javascript:history.back(-1);" class="layui-btn layui-btn-warm">返回</a>
+            </div>
+        </div>
+        
+    </form>
+</body>
+
+<script type="text/javascript" src="../../../../layuiadmin/layui/layui.js"></script>
+<script type="text/javascript" src="../../../../layuiadmin/js/global.js"></script>
+<script type="text/javascript">
+
+layui.config({
+        base: '../../../layuiadmin/' //静态资源所在路径
+    }).extend({
+        index: 'lib/index' //主入口模块
+    }).use([ 'jquery', 'element', 'table','form', 'tree', "laydate"], function () {
+        $ = layui.$;
+        var element = layui.element;
+        var table = layui.table;
+        var form = layui.form;
+        var laydate = layui.laydate;
+        topcateid = 0;
+
+        username = getCookie('username');
+        accessToken = getCookie('accessToken');
+        var host = parent.layui.setter.host;
+
+        /*要获取 url上id的值*/
+        var curId = getCookie('diaryId');
+
+        $.ajax({
+            url: host + "/api/v1/diary/monthly/detail",
+            type: "GET",
+            cache: false,
+            async: false,
+            data: {
+                access_token: accessToken,
+                user_login: username,
+                id: curId,
+                time: new Date()
+            },
+            success : function (res) {
+
+                identityFailure(res.status.code);
+
+                if (res.status.code != '001'){
+                    layer.msg(''+res.status.message+'');
+                    return false;
+                }
+
+                if (res.status.code == '001' && typeof(res.data)==null ){
+                    layer.msg('无法查询到数据');
+                    return false;
+                }
+
+                var other_work = res['data']['other_work']==""? "未填写":res['data']['other_work'];
+                var remarks = res['data']['remarks']==""? "未填写":res['data']['remarks'];
+                
+                $("#datemonth").val( res['data']['year'] + "-" + res['data']['month'] );
+                $("#content").val( res['data']['content'] );
+                $("#transliteration").val( res['data']['transliteration'] );
+
+                $("#maintenance").val( res['data']['maintenance'] );
+                $("#weed").val( res['data']['weed'] );
+                $("#mechanical_usage").val( res['data']['mechanical_usage'] );
+                $("#fertilization").val( res['data']['fertilization'] );
+                $("#other_work").val( other_work );
+                $("#remarks").val( remarks );
+
+            },
+        });
+
+        laydate.render({
+          elem: '#datemonth' //指定元素
+          ,type: 'month'
+          ,format: 'yyyy-M' //可任意组合
+        });
+
+        form.render();
+
+        form.on('submit(submitForm)', function(data){
+            var clickObj = data.elem;
+            $(clickObj).attr("disabled", true);
+            var postData = data.field;
+
+            postData['user_login'] = username;
+            postData['access_token'] = accessToken;
+            postData['id'] = curId;
+
+            /*年份采用起始时间区间年份*/
+            var chooseDateMonth = postData['datemonth'];
+            var chooseDateMonthArr = chooseDateMonth.split("-");
+
+            delete postData['datemonth'];
+            postData['year'] = chooseDateMonthArr[0];
+            postData['month'] = chooseDateMonthArr[1];
+
+            $.ajax({
+              url: host + "/api/v1/diary/monthly/update",
+              type: "POST",
+              data: postData,
+              async: false,
+              success: function(response){
+
+                identityFailure(response['status']['code']);
+                
+                if( response['status']['success'] ) {
+                  layer.msg("修改成功", {time: 2000});
+                  setTimeout(function(){
+                    window.location.reload();
+                  }, 1400);
+                } else {
+                  layer.msg(response['status']['message'], {time: 2000});
+                  $(clickObj).attr("disabled", false);
+                }
+              }
+            });
+            return false; //阻止表单跳转。如果需要表单跳转，去掉这段即可。
+        });
+
+    });
+</script>
